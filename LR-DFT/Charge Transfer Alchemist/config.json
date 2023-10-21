@@ -1,0 +1,14 @@
+{
+    "gs_filename": "nr_gs",
+    "ex_filename": "nr_ex",
+    "vee_filename": "nr_vee",
+    "vde_filename": "nr_vde",
+    "abs_vibronic_filename": "nr_vib_abs",
+    "ems_vibronic_filename": "nr_vib_ems",
+    "gs_content": "%chk={filename}_w{omega}.chk\n#P opt=CalcFC freq=(saveNM,hpmodes) LC-wHPBE/6-31G(d) Iop(3/107={omega}, 3/108={omega})\nSCRF=(IEFPCM, Solvent=DMSO) nosymm\n\nGs Opt_Freq calculation in dmso\n\n0 1\n{coordinates}\n\n",
+    "ex_content": "%oldchk={gs_filename}_w{omega}.chk\n%chk={filename}_w{omega}.chk\n#P tda=(root=1) opt=calcfc freq=(savenm,hpmodes) LC-wHPBE/ChkBasis Iop(3/107={omega}, 3/108={omega})\nSCRF=Check nosymm Geom=AllCheck Guess=Read\n\nExcited State Opt_Freq in dmso\n\n",
+    "vee_content": "%oldchk={gs_filename}_w{omega}.chk\n%chk={filename}_w{omega}.chk\n#P tda=(root=1) LC-wHPBE/ChkBasis Iop(3/107={omega}, 3/108={omega})\nSCRF=Check nosymm Geom=AllCheck Guess=Read\n\nVEE in dmso\n\n",
+    "vde_content": "%oldchk={ex_filename}_w{omega}.chk\n%chk={filename}_w{omega}.chk\n#P tda=(root=1) LC-wHPBE/ChkBasis Iop(3/107={omega}, 3/108={omega})\nSCRF=Check nosymm Geom=AllCheck Guess=Read\n\nVDE in dmso\n\n",
+    "abs_vib_content": "%chk={gs_filename}_w{omega}.chk\n#Geom=Check freq=(readfc,FC,readFCHT) nosymm\n\nVibronic Absorption calculation\n\n0 1\n\nTimeDependent\nTemperature=Value=300\nTransition=Absorption\nPrint=(Spectra=All,Matrix=JK)\n\n{ex_filename}_w{omega}.chk\n",
+    "ems_vib_content": "%chk={gs_filename}_w{omega}.chk\n#Geom=Check freq=(readfc,FC,readFCHT) nosymm\n\nVibronic Emission calculation\n\n0 1\n\nTimeDependent\nTemperature=Value=300\nTransition=Emission\nPrint=(Spectra=All,Matrix=JK)\n\n{ex_filename}_w{omega}.chk\n"
+}
