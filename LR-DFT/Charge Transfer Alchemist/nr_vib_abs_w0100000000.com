@@ -1,4 +1,4 @@
-%chk=mock_gs_w0100000000.chk
+%chk=nr_gs_w0100000000.chk
 #Geom=Check freq=(readfc,FC,readFCHT) nosymm
 
 Vibronic Absorption calculation
@@ -10,4 +10,4 @@ Temperature=Value=300
 Transition=Absorption
 Print=(Spectra=All,Matrix=JK)
 
-mock_ex_w0100000000.chk
+nr_ex_w0100000000.chk
