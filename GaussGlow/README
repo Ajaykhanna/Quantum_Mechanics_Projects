@@ -18,7 +18,7 @@ GaussGlow is your ultimate tool for generating Gaussian Vibronic Spectra with ea
 
 ## Getting Started 🚀
 
-1. **Clone the repo**: `git clone https://github.com/<your_username>/GaussGlow.git`
+1. **Clone the repo**: `git clone https://github.com/Ajaykhanna/Quantum_Mechanics_101/tree/3ae07d57fa57a4f305236b5260e0a1d3655c9826/GaussGlow`
 2. **Navigate to the directory**: `cd GaussGlow`
 3. **Run the script**: `python gaussian_vibronic_spectra_generator.py`
 
