@@ -1,4 +1,3 @@
-
 import re
 import csv
 import pandas as pd
@@ -12,7 +11,15 @@ def display_banner():
     print("=" * len(banner))
 
 def extract_data_from_log(filename):
-    """Extract relevant data from the Gaussian log file."""
+    """
+    The function `extract_data_from_log` extracts relevant data from a Gaussian log file, including the
+    energy of the 0-0 transition, the half-widths at half-maximum, and a spectrum list.
+    
+    :param filename: The filename parameter is a string that represents the name or path of the Gaussian
+    log file from which you want to extract data
+    :return: The function `extract_data_from_log` returns three values: `transition_value`,
+    `hwhm_value`, and `spectrum_list`.
+    """
     with open(filename, "r") as file:
         content = file.read()
     transition_match = re.search(r"Energy of the 0-0 transition:\s+(\d+\.\d+)", content)
@@ -32,7 +39,21 @@ def extract_data_from_log(filename):
     return transition_value, hwhm_value, spectrum_list
 
 def write_data_to_csv(filename, transition_value, hwhm_value, spectrum_list):
-    """Write the extracted data to a CSV file."""
+    """
+    The function `write_data_to_csv` writes extracted data to a CSV file, including transition value,
+    half-width half-maxima value, and a list of energy and intensity values.
+    
+    :param filename: The name of the CSV file you want to write the data to
+    :param transition_value: The transition_value parameter represents the value of the 0-0 transition
+    in cm^-1. It is a numerical value that indicates the energy difference between the ground state and
+    the excited state of a system
+    :param hwhm_value: The `hwhm_value` parameter represents the half-width half-maximum value, which is
+    a measure of the width of a peak in a spectrum at half of its maximum intensity. It is typically
+    expressed in units of cm^-1
+    :param spectrum_list: The `spectrum_list` parameter is a list of lists, where each inner list
+    represents a row of data in the CSV file. Each inner list should contain three elements: the energy
+    value in cm^-1, the intensity at 0K, and the intensity at 300K
+    """
     with open(filename, 'w', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         csvwriter.writerow(["# 0-0 transition value: " + str(transition_value) + " cm^-1"])
@@ -42,14 +63,31 @@ def write_data_to_csv(filename, transition_value, hwhm_value, spectrum_list):
             csvwriter.writerow(row)
 
 def read_and_normalize_data(filename):
-    """Read the data from the CSV file and normalize the intensities."""
+    """
+    The function reads data from a CSV file, skips the first 3 rows, and normalizes the intensities in
+    the "Intensity_0K" and "Intensity_300K" columns.
+    
+    :param filename: The filename parameter is the name of the CSV file that contains the data you want
+    to read and normalize
+    :return: a pandas DataFrame object.
+    """
     df = pd.read_csv(filename, comment='#', skiprows=3, names=["Energy", "Intensity_0K", "Intensity_300K"])
     df["Intensity_0K"] /= df["Intensity_0K"].max()
     df["Intensity_300K"] /= df["Intensity_300K"].max()
     return df
 
 def plot_spectra(abs_df, ems_df, output_filename):
-    """Plot both the absorption and emission spectra on a single plot."""
+    """
+    The function `plot_spectra` plots both the absorption and emission spectra on a single plot.
+    
+    :param abs_df: A pandas DataFrame containing the absorption spectra data. It should have columns
+    "Energy" and "Intensity_0K" for the absorption intensity at 0K, and "Intensity_300K" for the
+    absorption intensity at 300K
+    :param ems_df: A DataFrame containing the emission spectra data. It should have columns "Energy" and
+    "Intensity_0K" for the emission at 0K, and "Intensity_300K" for the emission at 300K
+    :param output_filename: The output_filename parameter is the name of the file where the plot will be
+    saved. It should include the file extension (e.g., "plot.png")
+    """
     plt.figure(figsize=(12, 8))
     plt.plot(abs_df["Energy"], abs_df["Intensity_0K"], color='blue', label='Absorption at 0K', alpha=0.7)
     plt.plot(abs_df["Energy"], abs_df["Intensity_300K"], color='orange', label='Absorption at 300K', alpha=0.7)
