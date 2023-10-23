@@ -1,5 +1,4 @@
 # GaussGlow ✨
-
 GaussGlow is your ultimate tool for generating Gaussian Vibronic Spectra with ease and precision. Dive deep into the quantum realm and visualize your results like never before!
 ![Finite Temperature Vibronic Spectra](./abs_ems_spectrum_plot.png)
 
