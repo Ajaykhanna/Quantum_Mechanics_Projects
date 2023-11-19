@@ -1,0 +1,5 @@
+{
+  "test_charge_transfer_alchemist.py::test_load_configuration": true,
+  "test_charge_transfer_alchemist.py::test_load_coordinates": true,
+  "test_charge_transfer_alchemist.py::test_write_input_files": true
+}
