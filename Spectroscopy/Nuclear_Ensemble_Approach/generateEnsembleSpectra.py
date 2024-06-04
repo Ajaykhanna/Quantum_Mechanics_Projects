@@ -27,7 +27,7 @@ INVCM_TO_EV = float(0.00012398)
 # -------------------
 # Required Functions
 # -------------------
-def load_exception_energies_transition_dipole_moments(filename: str) -> np.array:
+def load_excitation_energies_transition_dipole_moments(filename: str) -> np.array:
     """
     This function loads excitation energies and
     transition dipole moments from a file.
@@ -166,7 +166,7 @@ def main():
     FWHM to the standard deviation of the Gaussian.
     """
     excitation_energies, transition_dipole_moments = (
-        load_exception_energies_transition_dipole_moments(args.exictation_energies)
+        load_excitation_energies_transition_dipole_moments(args.exictation_energies)
     )
     energy_grid = (
         np.linspace(args.energy_grid[0], args.energy_grid[1], 26980)
