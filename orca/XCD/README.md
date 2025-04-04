@@ -54,17 +54,17 @@ ORCA .inp files and SLURM .slurm scripts will be generated in the respective dir
 ```
 
 ## ⚙️Configuration
-You can customize the following parameters in the script:
-
-
-Parameter	Description	Default Value
-partition_name	SLURM partition name	general
-time	Job time limit	00-01:00:00
-nodes	Number of nodes	1
-ntasks	Number of tasks	8
-mem	Memory in GB	40
-email	Email for job notifications	akhanna2@ucmerced.edu
-orb	Orbital number	1
+```
+| Parameter        | Description                  | Default Value        |
+|------------------|------------------------------|----------------------|
+| `partition_name` | SLURM partition name       | `general`            |
+| `time`           | Job time limit               | `00-01:00:00`         |
+| `nodes`          | Number of nodes             | `1`                  |
+| `ntasks`         | Number of tasks             | `8`                  |
+| `mem`            | Memory in GB                 | `40`                 |
+| `email`          | Email for job notifications | `akhanna2@ucmerced.edu` |
+| `orb`            | Orbital number               | `1`                  |
+```
 
 ## 📧 Contact
 For questions or feedback, feel free to reach out to Ajay Khanna at akhanna2@ucmerced.edu. ✉️
