@@ -1,0 +1,67 @@
+#!/bin/bash
+#SBATCH --partition={{ partition_name }}
+#SBATCH --time={{ time }}
+#SBATCH --nodes={{ nodes }}
+#SBATCH --ntasks={{ ntasks }}
+#SBATCH --mem={{ mem }}GB
+#SBATCH --job-name={{ base_name }}
+#SBATCH --output={{ base_name }}_optd_gs_orb_{{ orb }}_XCD.qlog
+#SBATCH --error={{ base_name }}_optd_gs_orb_{{ orb }}_XCD.err
+
+{% if email %}
+#SBATCH --mail-user={{ email }}
+#SBATCH --mail-type=END,FAIL
+{% endif %}
+
+module load openmpi/4.1.6-gcc_13.2.0
+export PATH=/projects/opt/rhel8/x86_64/openmpi/4.1.6-gcc_13.2.0/bin:/projects/tarzan/ORCA/orca_6_0_1:$PATH
+export LD_LIBRARY_PATH=/projects/opt/rhel8/x86_64/openmpi/4.1.6-gcc_13.2.0/lib:/projects/tarzan/ORCA/orca_6_0_1:$LD_LIBRARY_PATH
+export ORCA=/projects/tarzan/ORCA/orca_6_0_1
+
+JOB_ID=$SLURM_JOBID
+echo "SLURM_JOBID: $JOB_ID" >> {{ base_name }}_optd_gs_orb_{{ orb }}_XCD.qlog
+
+readonly Working_Directory=$PWD
+echo "The Current Working Directory is: $Working_Directory"
+echo "The Contents of the Current Working Directory are:"
+ls -l "$Working_Directory"
+
+mkdir -p /tmp/akhanna2/scratch/ORCA_SCR/$JOB_ID
+readonly MY_SCRATCH="/tmp/akhanna2/scratch/ORCA_SCR/$JOB_ID"
+cp -r $Working_Directory/* $MY_SCRATCH
+
+echo "The SCRATCH Directory Is: $MY_SCRATCH"
+echo "The Contents of the SCRATCH Directory are:"
+ls -l "$MY_SCRATCH"
+
+(
+  while true; do
+    if scontrol show job $JOB_ID | grep -q "JobState=RUNNING"; then
+        mem_used=$(free -m | awk 'NR==2 {{print $3}}')
+        mem_total=$(free -m | awk 'NR==2 {{print $2}}')
+        mem_percent=$(echo "scale=2; ($mem_used / $mem_total) * 100" | bc)
+        echo "$(date) - Memory Used: $mem_used MB, Total: $mem_total MB, Usage: $mem_percent%" >> {{ base_name }}_optd_gs_orb_{{ orb }}_XCD.qlog
+        sleep 60
+    else
+        echo "SLURM Job $JOB_ID is no longer running. Exiting memory monitor."
+        break
+    fi
+  done
+) &
+
+BG_PID=$!
+
+/projects/tarzan/ORCA/orca_6_0_1/orca $MY_SCRATCH/{{ base_name }}_optd_gs_orb_{{ orb }}_XCD.inp > $MY_SCRATCH/{{ base_name }}_optd_gs_orb_{{ orb }}_XCD.log
+
+sleep 10
+
+cp -r $MY_SCRATCH/* $Working_Directory
+
+trap "kill $BG_PID; exit" SIGINT
+
+if ! rm -rf "$MY_SCRATCH"; then
+    echo "Error removing scratch directory"
+    exit 1
+fi
+
+echo "Success or Failed, Still Buy The Developer A Beer"
