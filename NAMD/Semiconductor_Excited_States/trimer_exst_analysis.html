@@ -1,0 +1,298 @@
+<!-- Chosen Palette: Subtle & Sophisticated -->
+<!-- Application Structure Plan: The SPA is designed as an interactive dashboard. The primary interaction is a set of buttons allowing the user to select an excited state (S2-S6). This selection drives all content on the page, updating a series of data cards and charts. The layout uses a responsive grid to present: 1) Key metric cards for the selected state (Purity, Lambda, Delta_r) for each system, allowing for quick comparison. 2) An interactive bar chart visualizing NTO contributions to compare state mixing. 3) An interactive combo bar/line chart comparing charge-transfer metrics (Delta_r and Lambda). 4) A dynamic text panel that provides a contextual summary based on the user's selection. This dashboard structure was chosen because it empowers the user to ask specific questions (e.g., "How does S4 behave?") and receive a complete, focused answer, making it a more powerful tool for analysis than a linear report. -->
+<!-- Visualization & Content Choices: 
+- Navigation: HTML buttons. Goal: Control. Interaction: `onclick` events trigger a master `updateDashboard` function. Justification: Simple, intuitive control for the user. Method: Vanilla JS.
+- Key Metrics: Styled HTML cards. Goal: Inform. Interaction: Text content updated dynamically. Justification: Provides at-a-glance values for the selected state. Method: JS `innerText`.
+- NTO Contributions: Chart.js Grouped Bar Chart. Goal: Compare, Organize. Interaction: Chart updates on state selection. Justification: Excellent for comparing the magnitude of the top NTO eigenvalues across the three systems for any given state. Method: Chart.js (Canvas).
+- Charge-Transfer Character: Chart.js Combo Bar/Line Chart. Goal: Compare, Relationships. Interaction: Chart updates on state selection, with two y-axes. Justification: Shows the relationship (or decoupling) between physical distance (Δr, bars) and orbital overlap (λ, line) for a selected state across the systems. Method: Chart.js (Canvas).
+- Analysis Text: HTML div. Goal: Inform, Explain. Interaction: Text content updated dynamically. Justification: Provides crucial context and insights from the source report relevant to the user's selection. Method: JS `innerHTML`.
+- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard: Trimer Excited State Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F5F5;
+        }
+
+        .chart-container {
+            position: relative;
+            width: 100%;
+            height: 45vh;
+            max-height: 400px;
+        }
+
+        .nav-btn {
+            transition: all 0.2s ease-in-out;
+        }
+
+        .nav-btn.active {
+            background-color: #D32F2F;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-[#424242] mb-2">Trimer Excited State Analysis</h1>
+            <p class="text-md text-gray-600 max-w-3xl mx-auto">An interactive dashboard for comparing the photophysical
+                properties of three trimer systems based on their connectivity.</p>
+        </header>
+
+        <nav class="flex justify-center flex-wrap gap-2 sm:gap-4 mb-8 p-4 bg-white rounded-lg shadow-md">
+            <h2 class="w-full text-center font-bold text-lg text-[#424242] mb-2 sm:w-auto sm:mb-0 sm:mr-4">Select
+                Excited State:</h2>
+            <div id="state-selector" class="flex justify-center flex-wrap gap-2 sm:gap-4">
+                <button data-state="S2"
+                    class="nav-btn px-4 py-2 font-semibold bg-gray-200 rounded-lg shadow-sm hover:bg-[#E0E0E0]">S2</button>
+                <button data-state="S3"
+                    class="nav-btn px-4 py-2 font-semibold bg-gray-200 rounded-lg shadow-sm hover:bg-[#E0E0E0]">S3</button>
+                <button data-state="S4"
+                    class="nav-btn px-4 py-2 font-semibold bg-gray-200 rounded-lg shadow-sm hover:bg-[#E0E0E0]">S4</button>
+                <button data-state="S5"
+                    class="nav-btn px-4 py-2 font-semibold bg-gray-200 rounded-lg shadow-sm hover:bg-[#E0E0E0]">S5</button>
+                <button data-state="S6"
+                    class="nav-btn px-4 py-2 font-semibold bg-gray-200 rounded-lg shadow-sm hover:bg-[#E0E0E0]">S6</button>
+            </div>
+        </nav>
+
+        <main id="dashboard" class="space-y-8">
+            <section id="metrics-overview">
+                <h3 class="text-2xl font-bold text-center text-[#424242] mb-4">Key Metrics for State <span
+                        id="selected-state-title"></span></h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-red-500">
+                        <h4 class="text-xl font-bold text-gray-700 mb-3">Unattached (TSM)</h4>
+                        <div class="space-y-2 text-lg">
+                            <p><strong>NTO Purity:</strong> <span id="nto-tsm"
+                                    class="font-semibold text-red-600"></span></p>
+                            <p><strong>λ Index:</strong> <span id="lambda-tsm"
+                                    class="font-semibold text-red-600"></span></p>
+                            <p><strong>Δr Distance:</strong> <span id="dr-tsm"
+                                    class="font-semibold text-red-600"></span> Å</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-gray-500">
+                        <h4 class="text-xl font-bold text-gray-700 mb-3">Sandwiched (TTA)</h4>
+                        <div class="space-y-2 text-lg">
+                            <p><strong>NTO Purity:</strong> <span id="nto-tta"
+                                    class="font-semibold text-gray-800"></span></p>
+                            <p><strong>λ Index:</strong> <span id="lambda-tta"
+                                    class="font-semibold text-gray-800"></span></p>
+                            <p><strong>Δr Distance:</strong> <span id="dr-tta"
+                                    class="font-semibold text-gray-800"></span> Å</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md border-l-4 border-gray-500">
+                        <h4 class="text-xl font-bold text-gray-700 mb-3">ZigZag (TTL)</h4>
+                        <div class="space-y-2 text-lg">
+                            <p><strong>NTO Purity:</strong> <span id="nto-ttl"
+                                    class="font-semibold text-gray-800"></span></p>
+                            <p><strong>λ Index:</strong> <span id="lambda-ttl"
+                                    class="font-semibold text-gray-800"></span></p>
+                            <p><strong>Δr Distance:</strong> <span id="dr-ttl"
+                                    class="font-semibold text-gray-800"></span> Å</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-center text-[#424242] mb-4">State Purity: NTO Contributions</h3>
+                    <div class="chart-container">
+                        <canvas id="ntoChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-bold text-center text-[#424242] mb-4">Charge Transfer Character</h3>
+                    <div class="chart-container">
+                        <canvas id="ctChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <section id="analysis-panel" class="bg-white p-6 rounded-lg shadow-md">
+                <h3 class="text-2xl font-bold text-[#424242] mb-3">Analysis & Insights</h3>
+                <div id="analysis-text" class="prose max-w-none text-gray-700">
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-center mt-12 py-6 border-t border-[#E0E0E0]">
+            <p class="text-gray-500">Dashboard generated from computational analysis data. July 19, 2025.</p>
+        </footer>
+    </div>
+
+    <script>
+        const data = {
+            S2: {
+                tsm: { nto: [78.8, 14.9], lambda: 0.74, dr: 0.75 },
+                tta: { nto: [72.5, 25.1], lambda: 0.46, dr: 1.31 },
+                ttl: { nto: [67.8, 28.4], lambda: 0.50, dr: 2.46 },
+                analysis: "In the S2 state, the introduction of linkers, particularly in the ZigZag structure, dramatically increases the charge separation distance (Δr) from 0.75 Å to 2.46 Å. The Sandwiched system shows a significant drop in its λ index, suggesting the linker geometry forces a more localized excitation for this specific state."
+            },
+            S3: {
+                tsm: { nto: [95.4, 3.1], lambda: 0.49, dr: 2.53 },
+                tta: { nto: [61.2, 36.1], lambda: 0.58, dr: 2.26 },
+                ttl: { nto: [93.0, 4.7], lambda: 0.43, dr: 1.49 },
+                analysis: "The S3 state provides a stark contrast. In the Unattached system, it is an extremely 'pure' state (95.4% NTO). This purity is maintained in the ZigZag system. However, the Sandwiched system transforms S3 into the most heavily mixed state observed, with two NTOs contributing almost equally. This highlights the profound impact of linker geometry on state character."
+            },
+            S4: {
+                tsm: { nto: [80.5, 16.8], lambda: 0.72, dr: 1.20 },
+                tta: { nto: [66.8, 21.2], lambda: 0.66, dr: 2.04 },
+                ttl: { nto: [83.3, 14.3], lambda: 0.65, dr: 1.90 },
+                analysis: "The S4 state shows increased mixing in the Sandwiched system compared to the other two. Both linked systems exhibit a significantly larger charge separation distance (Δr) than the unattached baseline, demonstrating enhanced charge transfer capabilities facilitated by the covalent linkers."
+            },
+            S5: {
+                tsm: { nto: [71.2, 22.7], lambda: 0.64, dr: 1.95 },
+                tta: { nto: [68.3, 17.1], lambda: 0.74, dr: 1.04 },
+                ttl: { nto: [58.1, 27.5], lambda: 0.69, dr: 1.68 },
+                analysis: "The S5 state is the most 'mixed' for both the Unattached and ZigZag systems. Interestingly, the Sandwiched system shows the smallest charge separation distance for this state, indicating that its linker geometry can, in some cases, suppress long-range charge transfer in favor of more localized excitations."
+            },
+            S6: {
+                tsm: { nto: [84.0, 11.6], lambda: 0.50, dr: 3.00 },
+                tta: { nto: [96.9, 1.1], lambda: 0.57, dr: 2.76 },
+                ttl: { nto: [95.4, 2.1], lambda: 0.44, dr: 3.20 },
+                analysis: "The S6 state is where the 'molecular wire' concept of the ZigZag system becomes most apparent. It combines a very pure state character (95.4% NTO) and low orbital overlap (λ=0.44) with the largest physical charge separation of all states (Δr=3.20 Å). This is the hallmark of highly efficient, long-range through-bond charge transfer, a direct consequence of the continuous covalent pathway."
+            }
+        };
+
+        const tooltipTitleCallback = {
+            callbacks: {
+                title: function (tooltipItems) {
+                    const item = tooltipItems[0];
+                    let label = item.chart.data.labels[item.dataIndex];
+                    if (Array.isArray(label)) { return label.join(' '); }
+                    return label;
+                }
+            }
+        };
+
+        let ntoChart, ctChart;
+
+        function initCharts() {
+            const ntoCtx = document.getElementById('ntoChart').getContext('2d');
+            ntoChart = new Chart(ntoCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Unattached', 'Sandwiched', 'ZigZag'],
+                    datasets: [
+                        { label: 'NTO 1 (%)', data: [], backgroundColor: '#757575' },
+                        { label: 'NTO 2 (%)', data: [], backgroundColor: '#E0E0E0' }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: tooltipTitleCallback, legend: { position: 'top' } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Contribution (%)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            const ctCtx = document.getElementById('ctChart').getContext('2d');
+            ctChart = new Chart(ctCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Unattached', 'Sandwiched', 'ZigZag'],
+                    datasets: [
+                        {
+                            label: 'Δr Distance (Å)',
+                            data: [],
+                            backgroundColor: ['#D32F2F', '#757575', '#757575'],
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'λ Index',
+                            data: [],
+                            type: 'line',
+                            borderColor: '#424242',
+                            borderWidth: 3,
+                            tension: 0.1,
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: { ...tooltipTitleCallback, mode: 'index', intersect: false }, legend: { position: 'top' } },
+                    scales: {
+                        y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Δr Distance (Å)' }, beginAtZero: true },
+                        y1: { type: 'linear', display: true, position: 'right', title: { display: true, text: 'λ Index' }, grid: { drawOnChartArea: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        function updateDashboard(state) {
+            const stateData = data[state];
+
+            document.getElementById('selected-state-title').innerText = state;
+            document.getElementById('analysis-text').innerHTML = `<p>${stateData.analysis}</p>`;
+
+            document.getElementById('nto-tsm').innerText = `${stateData.tsm.nto[0]}%`;
+            document.getElementById('lambda-tsm').innerText = stateData.tsm.lambda.toFixed(2);
+            document.getElementById('dr-tsm').innerText = stateData.tsm.dr.toFixed(2);
+
+            document.getElementById('nto-tta').innerText = `${stateData.tta.nto[0]}%`;
+            document.getElementById('lambda-tta').innerText = stateData.tta.lambda.toFixed(2);
+            document.getElementById('dr-tta').innerText = stateData.tta.dr.toFixed(2);
+
+            document.getElementById('nto-ttl').innerText = `${stateData.ttl.nto[0]}%`;
+            document.getElementById('lambda-ttl').innerText = stateData.ttl.lambda.toFixed(2);
+            document.getElementById('dr-ttl').innerText = stateData.ttl.dr.toFixed(2);
+
+            ntoChart.data.datasets[0].data = [stateData.tsm.nto[0], stateData.tta.nto[0], stateData.ttl.nto[0]];
+            ntoChart.data.datasets[1].data = [stateData.tsm.nto[1], stateData.tta.nto[1], stateData.ttl.nto[1]];
+            ntoChart.update();
+
+            ctChart.data.datasets[0].data = [stateData.tsm.dr, stateData.tta.dr, stateData.ttl.dr];
+            ctChart.data.datasets[1].data = [stateData.tsm.lambda, stateData.tta.lambda, stateData.ttl.lambda];
+            ctChart.update();
+
+            document.querySelectorAll('#state-selector button').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.state === state);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            initCharts();
+            updateDashboard('S2');
+
+            document.getElementById('state-selector').addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    const state = e.target.dataset.state;
+                    if (state) {
+                        updateDashboard(state);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

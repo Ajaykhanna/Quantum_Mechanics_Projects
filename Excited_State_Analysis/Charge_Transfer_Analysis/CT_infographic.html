@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide to Charge Transfer Excitation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .tab-active {
+            background-color: #4f46e5;
+            color: white;
+        }
+
+        .tab-inactive {
+            background-color: #e0e7ff;
+            color: #4f46e5;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+            cursor: help;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 220px;
+            background-color: #374151;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -110px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip .tooltiptext::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #374151 transparent transparent transparent;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-indigo-700">Understanding Charge Transfer Excitation</h1>
+            <p class="text-lg text-gray-600 mt-2">An interactive guide to analyzing LE vs. CT character using Multiwfn
+                outputs.</p>
+        </header>
+
+        <main class="bg-white shadow-2xl rounded-2xl p-6 md:p-8">
+            <!-- Tabs for navigation -->
+            <div class="flex justify-center border-b-2 border-gray-200 mb-6">
+                <button id="tab-rho"
+                    class="tab-btn tab-active text-sm md:text-base font-semibold py-3 px-4 md:px-6 rounded-t-lg focus:outline-none transition-colors duration-300">Δρ
+                    Analysis</button>
+                <button id="tab-delta-r"
+                    class="tab-btn tab-inactive text-sm md:text-base font-semibold py-3 px-4 md:px-6 rounded-t-lg focus:outline-none transition-colors duration-300">Δr
+                    Index</button>
+                <button id="tab-lambda"
+                    class="tab-btn tab-inactive text-sm md:text-base font-semibold py-3 px-4 md:px-6 rounded-t-lg focus:outline-none transition-colors duration-300">Λ
+                    Index</button>
+            </div>
+
+            <!-- Main content area -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+                <!-- Left side: Visualization -->
+                <div class="bg-indigo-50 rounded-xl p-4 h-96 flex items-center justify-center">
+                    <svg id="molecule-vis" viewBox="0 0 400 200" class="w-full h-full">
+                        <!-- Molecule structure -->
+                        <line x1="150" y1="100" x2="250" y2="100" stroke="#9ca3af" stroke-width="4" />
+                        <circle cx="150" cy="100" r="15" fill="#6b7280" />
+                        <circle cx="250" cy="100" r="15" fill="#6b7280" />
+
+                        <!-- Hole (electron source) -->
+                        <ellipse id="hole" cx="150" cy="100" rx="60" ry="30" fill="blue" fill-opacity="0.5" />
+
+                        <!-- Electron (electron destination) -->
+                        <ellipse id="electron" cx="250" cy="100" rx="60" ry="30" fill="green" fill-opacity="0.5" />
+
+                        <!-- Barycenters and Distance Line -->
+                        <circle id="hole-barycenter" cx="150" cy="100" r="5" fill="cyan" stroke="white"
+                            stroke-width="1.5" />
+                        <circle id="electron-barycenter" cx="250" cy="100" r="5" fill="#34d399" stroke="white"
+                            stroke-width="1.5" />
+                        <line id="distance-line" x1="150" y1="100" x2="250" y2="100" stroke="white" stroke-width="2"
+                            stroke-dasharray="5,5" />
+                        <text id="distance-text" x="200" y="90" fill="white" font-size="14" text-anchor="middle"
+                            font-weight="bold">D = 4.95 Å</text>
+                    </svg>
+                </div>
+
+                <!-- Right side: Explanation and controls -->
+                <div id="analysis-content" class="space-y-4">
+                    <!-- Content will be dynamically inserted here -->
+                </div>
+            </div>
+        </main>
+
+        <footer class="text-center mt-8 text-gray-500 text-sm">
+            <p>Based on the Multiwfn tutorial. This is a simplified educational tool.</p>
+        </footer>
+    </div>
+
+    <script>
+        // DOM Elements
+        const tabs = {
+            rho: document.getElementById('tab-rho'),
+            deltaR: document.getElementById('tab-delta-r'),
+            lambda: document.getElementById('tab-lambda'),
+        };
+        const contentEl = document.getElementById('analysis-content');
+        const vis = {
+            hole: document.getElementById('hole'),
+            electron: document.getElementById('electron'),
+            holeBarycenter: document.getElementById('hole-barycenter'),
+            electronBarycenter: document.getElementById('electron-barycenter'),
+            distanceLine: document.getElementById('distance-line'),
+            distanceText: document.getElementById('distance-text'),
+        };
+
+        // --- Content Templates ---
+        const contentTemplates = {
+            rho: `
+                <h2 class="text-2xl font-bold text-indigo-600">Analysis via Electron Density Difference (Δρ)</h2>
+                <p>This method directly visualizes where electron density is lost (the 'hole', <span class="text-blue-500 font-semibold">blue</span>) and gained (the 'electron', <span class="text-green-500 font-semibold">green</span>) during an excitation.</p>
+                <div class="bg-gray-100 p-4 rounded-lg space-y-2">
+                    <h3 class="font-semibold text-lg">Key Indices:</h3>
+                    <div class="grid grid-cols-2 gap-2 text-sm">
+                        <p><span class="font-bold tooltip">D index<span class="tooltiptext">The distance between the centers (barycenters) of the hole and electron distributions.</span></span>: <span class="font-mono text-indigo-700">4.95 Å</span></p>
+                        <p><span class="font-bold tooltip">t index<span class="tooltiptext">Measures the separation of the hole and electron. A large positive value indicates significant separation.</span></span>: <span class="font-mono text-indigo-700">1.81 Å</span></p>
+                        <p><span class="font-bold tooltip">S index<span class="tooltiptext">The overlap between the hole and electron. Smaller values mean less overlap and more CT character.</span></span>: <span class="font-mono text-indigo-700">0.74</span></p>
+                        <p><span class="font-bold tooltip">Dipole Δ<span class="tooltiptext">A large change in dipole moment is a strong indicator of charge transfer.</span></span>: <span class="font-mono text-indigo-700">20.07 D</span></p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg">Conclusion:</h3>
+                    <div id="conclusion-rho" class="p-3 rounded-lg bg-green-100 text-green-800 border border-green-300">
+                        <p><span class="font-bold">Result:</span> Strong Charge-Transfer (CT) Character</p>
+                        <p class="text-sm">The large separation between the hole and electron barycenters (high D index) and the significant change in dipole moment clearly indicate a CT excitation.</p>
+                    </div>
+                </div>
+            `,
+            deltaR: `
+                <h2 class="text-2xl font-bold text-indigo-600">Analysis via Δr Index</h2>
+                <p>The <span class="font-bold tooltip">Δr index<span class="tooltiptext">A quantitative measure of the charge transfer length.</span></span> provides a single number to estimate the CT distance. A value greater than 2.0 Å is a common threshold for identifying CT excitations.</p>
+                <div>
+                    <label for="delta-r-slider" class="font-semibold">Adjust Δr Index (Å): <span id="delta-r-value" class="font-bold font-mono text-indigo-700">3.11</span></label>
+                    <input type="range" id="delta-r-slider" min="0.5" max="5.0" value="3.11" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg">Conclusion:</h3>
+                    <div id="conclusion-delta-r" class="p-3 rounded-lg">
+                        <!-- Dynamic conclusion here -->
+                    </div>
+                </div>
+                <div class="text-xs text-gray-500">
+                    <p><strong>Note:</strong> The Δr index can be decomposed into contributions from individual molecular orbital pairs, helping to pinpoint the origin of the CT character.</p>
+                </div>
+            `,
+            lambda: `
+                <h2 class="text-2xl font-bold text-indigo-600">Analysis via Λ (Lambda) Index</h2>
+                <p>The <span class="font-bold tooltip">Λ index<span class="tooltiptext">Measures the degree of spatial overlap between the hole and electron distributions.</span></span> is inversely related to CT character. A smaller value means less overlap and a stronger CT nature.</p>
+                <div>
+                    <label for="lambda-slider" class="font-semibold">Adjust Λ Index: <span id="lambda-value" class="font-bold font-mono text-indigo-700">0.20</span></label>
+                    <input type="range" id="lambda-slider" min="0.05" max="0.95" value="0.20" step="0.01" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg">Conclusion:</h3>
+                    <div id="conclusion-lambda" class="p-3 rounded-lg">
+                        <!-- Dynamic conclusion here -->
+                    </div>
+                </div>
+                 <div class="text-xs text-gray-500">
+                    <p><strong>Note:</strong> While there isn't a strict universal threshold, smaller values (e.g., < 0.4) often suggest CT, while larger values (e.g., > 0.6) suggest LE. The relationship is generally inverse to Δr.</p>
+                </div>
+            `
+        };
+
+        // --- Update Functions ---
+        function updateActiveTab(activeTabId) {
+            // This function now correctly handles highlighting the active tab.
+            Object.keys(tabs).forEach(key => {
+                const tabEl = tabs[key];
+                if (tabEl.id === activeTabId) {
+                    tabEl.classList.replace('tab-inactive', 'tab-active');
+                } else {
+                    tabEl.classList.replace('tab-active', 'tab-inactive');
+                }
+            });
+        }
+
+        function renderContent(contentType) {
+            contentEl.innerHTML = contentTemplates[contentType];
+            // Add event listeners for sliders if they exist
+            if (contentType === 'deltaR') {
+                document.getElementById('delta-r-slider').addEventListener('input', updateDeltaR);
+                updateDeltaR(); // Initial call
+            } else if (contentType === 'lambda') {
+                document.getElementById('lambda-slider').addEventListener('input', updateLambda);
+                updateLambda(); // Initial call
+            } else if (contentType === 'rho') {
+                updateRhoVis();
+            }
+        }
+
+        function updateDeltaR() {
+            const slider = document.getElementById('delta-r-slider');
+            const valueEl = document.getElementById('delta-r-value');
+            const conclusionEl = document.getElementById('conclusion-delta-r');
+            const value = parseFloat(slider.value);
+            valueEl.textContent = value.toFixed(2);
+
+            // Update visualization
+            const separation = 50 + (value * 20); // Scale separation for visual effect
+            vis.holeBarycenter.setAttribute('cx', 200 - separation / 2);
+            vis.electronBarycenter.setAttribute('cx', 200 + separation / 2);
+            vis.hole.setAttribute('cx', 200 - separation / 2);
+            vis.electron.setAttribute('cx', 200 + separation / 2);
+            vis.distanceLine.setAttribute('x1', 200 - separation / 2);
+            vis.distanceLine.setAttribute('x2', 200 + separation / 2);
+            vis.distanceText.textContent = `Δr = ${value.toFixed(2)} Å`;
+            vis.distanceText.setAttribute('x', 200);
+
+            // Update conclusion
+            if (value > 2.0) {
+                conclusionEl.className = 'p-3 rounded-lg bg-green-100 text-green-800 border border-green-300';
+                conclusionEl.innerHTML = `
+                    <p><span class="font-bold">Result:</span> Charge-Transfer (CT) Excitation</p>
+                    <p class="text-sm">The Δr index of ${value.toFixed(2)} Å is greater than the 2.0 Å threshold, indicating significant charge transfer.</p>`;
+            } else {
+                conclusionEl.className = 'p-3 rounded-lg bg-yellow-100 text-yellow-800 border border-yellow-300';
+                conclusionEl.innerHTML = `
+                    <p><span class="font-bold">Result:</span> Local Excitation (LE)</p>
+                    <p class="text-sm">The Δr index of ${value.toFixed(2)} Å is below the 2.0 Å threshold, suggesting the excitation is localized.</p>`;
+            }
+        }
+
+        function updateLambda() {
+            const slider = document.getElementById('lambda-slider');
+            const valueEl = document.getElementById('lambda-value');
+            const conclusionEl = document.getElementById('conclusion-lambda');
+            const value = parseFloat(slider.value);
+            valueEl.textContent = value.toFixed(2);
+
+            // Update visualization (inverse relationship to separation/overlap)
+            const overlap = (1 - value) * 100; // More overlap for higher lambda
+            const separation = 20 + (1 - value) * 100
+            vis.holeBarycenter.setAttribute('cx', 200 - separation / 2);
+            vis.electronBarycenter.setAttribute('cx', 200 + separation / 2);
+            vis.hole.setAttribute('cx', 200 - separation / 2 + overlap / 4);
+            vis.electron.setAttribute('cx', 200 + separation / 2 - overlap / 4);
+            vis.distanceLine.setAttribute('x1', 200 - separation / 2);
+            vis.distanceLine.setAttribute('x2', 200 + separation / 2);
+            vis.distanceText.textContent = `Λ = ${value.toFixed(2)}`;
+            vis.distanceText.setAttribute('x', 200);
+
+            // Update conclusion
+            if (value < 0.4) {
+                conclusionEl.className = 'p-3 rounded-lg bg-green-100 text-green-800 border border-green-300';
+                conclusionEl.innerHTML = `
+                    <p><span class="font-bold">Result:</span> Charge-Transfer (CT) Character</p>
+                    <p class="text-sm">The low Λ index of ${value.toFixed(2)} indicates poor overlap between the hole and electron, which is characteristic of CT.</p>`;
+            } else if (value > 0.6) {
+                conclusionEl.className = 'p-3 rounded-lg bg-yellow-100 text-yellow-800 border border-yellow-300';
+                conclusionEl.innerHTML = `
+                    <p><span class="font-bold">Result:</span> Local Excitation (LE) Character</p>
+                    <p class="text-sm">The high Λ index of ${value.toFixed(2)} indicates significant hole-electron overlap, suggesting an LE state.</p>`;
+            } else {
+                conclusionEl.className = 'p-3 rounded-lg bg-blue-100 text-blue-800 border border-blue-300';
+                conclusionEl.innerHTML = `
+                    <p><span class="font-bold">Result:</span> Ambiguous / Mixed Character</p>
+                    <p class="text-sm">A Λ index of ${value.toFixed(2)} is in an intermediate range, suggesting the excitation may have both LE and CT character.</p>`;
+            }
+        }
+
+        function updateRhoVis() {
+            vis.holeBarycenter.setAttribute('cx', 150);
+            vis.electronBarycenter.setAttribute('cx', 250);
+            vis.hole.setAttribute('cx', 150);
+            vis.electron.setAttribute('cx', 250);
+            vis.distanceLine.setAttribute('x1', 150);
+            vis.distanceLine.setAttribute('x2', 250);
+            vis.distanceText.textContent = `D = 4.95 Å`;
+            vis.distanceText.setAttribute('x', 200);
+        }
+
+        // --- Event Listeners ---
+        tabs.rho.addEventListener('click', () => {
+            updateActiveTab('tab-rho');
+            renderContent('rho');
+        });
+        tabs.deltaR.addEventListener('click', () => {
+            updateActiveTab('tab-delta-r');
+            renderContent('deltaR');
+        });
+        tabs.lambda.addEventListener('click', () => {
+            updateActiveTab('tab-lambda');
+            renderContent('lambda');
+        });
+
+        // --- Initial Load ---
+        renderContent('rho');
+
+    </script>
+</body>
+
+</html>
