@@ -1,459 +1,781 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Modeling Excited States in Organic Aggregates</title>
-  <style>
-    /* Reset & Base Styles */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modeling Excited States in Molecular Organic Aggregates</title>
+    <style>
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, 
-        #ffffff 0%, 
-        #f5f7fa 50%, 
-        #e6f7ff 100%);
-      color: #2c3e50;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg,
+                    #ffffff 0%,
+                    #f5f7fa 50%,
+                    #e6f7ff 70%);
+            color: #2c3e50;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
 
-    header {
-      background: #0d47a1;
-      color: white;
-      text-align: center;
-      padding: 3rem 1rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    }
+        header {
+            background: #415E72;
+            color: white;
+            text-align: center;
+            padding: 3rem 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
 
-    header h1 {
-      font-size: 2.6rem;
-      margin-bottom: 0.6rem;
-      font-weight: 600;
-    }
+        header h1 {
+            font-size: 2.6rem;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
 
-    header p {
-      font-size: 1.2rem;
-      opacity: 0.9;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 1.5rem;
-    }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
 
-    section {
-      background: white;
-      margin-bottom: 3rem;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(30px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      border-left: 6px solid #4a90e2;
-    }
+        section {
+            background: white;
+            margin-bottom: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+            border-left: 6px solid #00809D;
+        }
 
-    section.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    section h2 {
-      background: #1976d2;
-      color: white;
-      padding: 1.4rem 1.5rem;
-      font-size: 1.8rem;
-      font-weight: 600;
-    }
+        section h2 {
+            background: #00809D;
+            color: white;
+            padding: 1.4rem 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
 
-    .content {
-      padding: 1.8rem;
-    }
+        .content {
+            padding: 1.8rem;
+        }
 
-    p {
-      margin-bottom: 1rem;
-    }
+        p {
+            margin-bottom: 1rem;
+        }
 
-    ul, ol {
-      margin-left: 1.6rem;
-      margin-top: 0.6rem;
-      margin-bottom: 1rem;
-    }
+        ul,
+        ol {
+            margin-left: 1.6rem;
+            margin-top: 0.6rem;
+            margin-bottom: 1rem;
+        }
 
-    li {
-      margin: 0.5rem 0;
-    }
+        li {
+            margin: 0.5rem 0;
+        }
 
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 1.6rem;
-      margin: 1.4rem 0;
-    }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.6rem;
+            margin: 1.4rem 0;
+        }
 
-    .card {
-      border: 1px solid #e0e7ff;
-      border-radius: 12px;
-      padding: 1.2rem;
-      background: #f8fbff;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
+        .card {
+            border: 1px solid #e0e7ff;
+            border-radius: 12px;
+            padding: 1.2rem;
+            background: #f8fbff;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
 
-    .card:hover {
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
-      transform: translateY(-4px);
-      border-color: #a0d8f1;
-    }
+        .card:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            border-color: #a0d8f1;
+        }
 
-    .card h3 {
-      color: #0d47a1;
-      margin-bottom: 0.6rem;
-      font-size: 1.3rem;
-    }
+        .card h3 {
+            color: #00809D;
+            margin-bottom: 0.6rem;
+            font-size: 1.3rem;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.4rem 0;
-      font-size: 0.98rem;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-      border-radius: 8px;
-      overflow: hidden;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.4rem 0;
+            font-size: 0.98rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            overflow: hidden;
+        }
 
-    table th, table td {
-      border: 1px solid #d0e7ff;
-      padding: 0.9rem;
-      text-align: left;
-    }
+        table th,
+        table td {
+            border: 1px solid #d0e7ff;
+            padding: 0.9rem;
+            text-align: left;
+        }
 
-    table th {
-      background: #1976d2;
-      color: white;
-      font-weight: 600;
-    }
+        table th {
+            background: #00809D;
+            color: white;
+            font-weight: 600;
+        }
 
-    table tr:nth-child(even) {
-      background-color: #f3f8ff;
-    }
+        table tr:nth-child(even) {
+            background-color: #f3f8ff;
+        }
 
-    table tr:hover {
-      background-color: #e6f3ff;
-    }
+        table tr:hover {
+            background-color: #e6f3ff;
+        }
 
-    .section-title {
-      color: #1565c0;
-      border-bottom: 2px solid #b3d9ff;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1.2rem;
-      font-size: 1.4rem;
-    }
+        .section-title {
+            color: #1565c0;
+            border-bottom: 2px solid #b3d9ff;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.2rem;
+            font-size: 1.4rem;
+        }
 
-    .highlight {
-      background: #e3f2fd;
-      padding: 0.3rem 0.6rem;
-      border-radius: 6px;
-      font-weight: 600;
-      color: #0d47a1;
-    }
+        .highlight {
+            background: #e3f2fd;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-weight: 600;
+            color: #0d47a1;
+        }
 
-    footer {
-      text-align: center;
-      padding: 3rem 1rem;
-      background: #0d47a1;
-      color: white;
-      margin-top: 2rem;
-      font-size: 1.1rem;
-    }
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: #0d47a1;
+            color: white;
+            margin-top: 2rem;
+            font-size: 1.1rem;
+        }
 
-    footer p {
-      opacity: 0.9;
-    }
+        footer p {
+            opacity: 0.9;
+        }
 
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 2rem;
-      }
-      header p {
-        font-size: 1rem;
-      }
-      .content {
-        padding: 1.2rem;
-      }
-      section h2 {
-        font-size: 1.5rem;
-        padding: 1.2rem;
-      }
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2rem;
+            }
+
+            header p {
+                font-size: 1rem;
+            }
+
+            .content {
+                padding: 1.2rem;
+            }
+
+            section h2 {
+                font-size: 1.5rem;
+                padding: 1.2rem;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Animation Container Styles */
+        .diagram-container {
+            position: relative;
+            width: 100%;
+            height: 420px;
+            margin: 2.5rem auto;
+            background: #f0f8ff;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid #d0ebff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-group {
+            display: inline-flex;
+            border: 2px solid #00809D;
+            border-radius: 50px;
+            overflow: hidden;
+        }
+
+        .btn {
+            background: #bbdefb;
+            color: #00809D;
+            padding: 0.9rem 1.8rem;
+            border: none;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn.active {
+            background: #00809D;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            padding: 1.4rem;
+            border-radius: 12px;
+            border-left: 6px solid #00809D;
+            margin-top: 1.8rem;
+            font-size: 1.1rem;
+        }
+
+        .info-box h3 {
+            color: #00809D;
+            margin-bottom: 0.6rem;
+        }
+
+        /* Shared Animation Styles */
+        .pes {
+            position: absolute;
+            width: 240px;
+            height: 180px;
+            border-radius: 50% / 35%;
+            background: transparent;
+            box-shadow: inset 0 0 0 4px #e91e63, inset 0 -35px 25px -15px rgba(233, 30, 99, 0.4);
+            transform: rotateX(70deg) rotateZ(20deg);
+            transition: all 0.8s ease;
+        }
+
+        .ci-point {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background: #ffeb3b;
+            border: 3px solid #f57f17;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 18px rgba(255, 235, 59, 0.9);
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 18px rgba(255, 235, 59, 0.9);
+            }
+
+            100% {
+                transform: scale(1.25);
+                box-shadow: 0 0 28px rgba(255, 235, 59, 1);
+            }
+        }
+
+        .molecule {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #673ab7;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            z-index: 5;
+        }
+
+        .tdm-arrow {
+            position: absolute;
+            height: 10px;
+            background: #00809D;
+            border-radius: 5px;
+            transform-origin: left center;
+            z-index: 4;
+        }
+
+        .tdm-arrow::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid #00809D;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+
+        .label {
+            position: absolute;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #00809D;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 6px 10px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 6;
+            white-space: nowrap;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .diagram-container {
+                height: 360px;
+            }
+
+            .molecule {
+                width: 50px;
+                height: 50px;
+                font-size: 0.8rem;
+            }
+
+            .tdm-arrow {
+                height: 8px;
+            }
+
+            .tdm-arrow::after {
+                border-left: 10px solid #00809D;
+                border-top: 5px solid transparent;
+                border-bottom: 5px solid transparent;
+            }
+
+            .label {
+                font-size: 0.9rem;
+                padding: 4px 8px;
+            }
+
+            .pes {
+                width: 200px;
+                height: 150px;
+            }
+
+            .ci-point {
+                width: 16px;
+                height: 16px;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-  <header>
-    <h1>🔬 Modeling Excited States in Molecular Organic Aggregates</h1>
-    <p>A Student-Friendly Guide to Optoelectronic Materials Design</p>
-  </header>
+    <header>
+        <h1>🔬 Modeling Excited States in Molecular Organic Aggregates</h1>
+        <p>A Student-Friendly Guide to Optoelectronic Materials Design</p>
+    </header>
 
-  <div class="container">
+    <div class="container">
 
-    <!-- Section 1: Introduction -->
-    <section>
-      <h2>📘 Introduction</h2>
-      <div class="content">
-        <p>This infographic summarizes the key insights from the review:</p>
-        <p class="highlight">"Modeling Excited States of Molecular Organic Aggregates for Optoelectronics" by Federico J. Hernández and Rachel Crespo-Otero</p>
-        <p>The article explores computational methods to understand light-activated processes in <strong>organic molecular aggregates</strong>—systems of weakly interacting molecules used in:</p>
-        <ul>
-          <li><strong>Organic Light-Emitting Diodes (OLEDs)</strong></li>
-          <li><strong>Organic Solar Cells (OSCs)</strong></li>
-          <li><strong>Lasers, Sensors, and Phosphorescent Devices</strong></li>
-        </ul>
-        <p>The focus is on <strong>exciton models</strong>, <strong>electronic structure methods</strong>, <strong>nonradiative decay</strong>, and <strong>energy/charge transport</strong>, with an emphasis on <strong>conical intersections (CIs)</strong> and <strong>excited-state dynamics</strong>.</p>
-      </div>
-    </section>
+        <!-- Section 1: Introduction -->
+        <section class="visible">
+            <h2>📘 Introduction</h2>
+            <div class="content">
+                <p>This infographic summarizes the key insights from the review:</p>
+                <p class="highlight">"Modeling Excited States of Molecular Organic Aggregates for Optoelectronics" by
+                    Federico J. Hernández and Rachel Crespo-Otero</p>
+                <p>The article explores computational methods to understand light-activated processes in <strong>organic
+                        molecular aggregates</strong>—systems of weakly interacting molecules used in:</p>
+                <ul>
+                    <li><strong>Organic Light-Emitting Diodes (OLEDs)</strong></li>
+                    <li><strong>Organic Solar Cells (OSCs)</strong></li>
+                    <li><strong>Lasers, Sensors, and Phosphorescent Devices</strong></li>
+                </ul>
+                <p>The focus is on <strong>exciton models</strong>, <strong>electronic structure methods</strong>,
+                    <strong>nonradiative decay</strong>, and <strong>energy/charge transport</strong>, with an emphasis
+                    on <strong>conical intersections (CIs)</strong> and <strong>excited-state dynamics</strong>.</p>
+            </div>
+        </section>
 
-    <!-- Section 2: Key Processes -->
-    <section>
-      <h2>⚡ Key Excited-State Processes</h2>
-      <div class="content">
-        <p>Photoexcitation triggers a variety of intra- and intermolecular processes critical to device performance:</p>
-        <table>
-          <tr><th>Process</th><th>Description</th><th>Application</th></tr>
-          <tr><td><strong>FRET</strong></td><td>Long-range energy transfer via dipole-dipole coupling</td><td>OLEDs, Light Harvesting</td></tr>
-          <tr><td><strong>Dexter</strong></td><td>Short-range electron exchange</td><td>Triplet transport</td></tr>
-          <tr><td><strong>CT</strong></td><td>Charge separation between molecules</td><td>OSCs, TADF</td></tr>
-          <tr><td><strong>Singlet Fission (SF)</strong></td><td>One singlet → two triplets</td><td>Solar efficiency booster</td></tr>
-          <tr><td><strong>TTA</strong></td><td>Two triplets → one singlet (delayed fluorescence)</td><td>Photon upconversion</td></tr>
-          <tr><td><strong>ISC / rISC</strong></td><td>S₁ ↔ T₁ transitions</td><td>TADF, Room-temp phosphorescence</td></tr>
-        </table>
-        <p>These processes often <strong>compete</strong> and must be modeled simultaneously for accurate predictions.</p>
-      </div>
-    </section>
+        <!-- Section 2: Key Processes -->
+        <section>
+            <h2>⚡ Key Excited-State Processes</h2>
+            <div class="content">
+                <p>Photoexcitation triggers a variety of intra- and intermolecular processes critical to device
+                    performance:</p>
+                <table>
+                    <tr>
+                        <th>Process</th>
+                        <th>Description</th>
+                        <th>Application</th>
+                    </tr>
+                    <tr>
+                        <td><strong>FRET</strong></td>
+                        <td>Long-range energy transfer via dipole-dipole coupling</td>
+                        <td>OLEDs, Light Harvesting</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Dexter</strong></td>
+                        <td>Short-range electron exchange</td>
+                        <td>Triplet transport</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CT</strong></td>
+                        <td>Charge separation between molecules</td>
+                        <td>OSCs, TADF</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Singlet Fission (SF)</strong></td>
+                        <td>One singlet → two triplets</td>
+                        <td>Solar efficiency booster</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TTA</strong></td>
+                        <td>Two triplets → one singlet (delayed fluorescence)</td>
+                        <td>Photon upconversion</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ISC / rISC</strong></td>
+                        <td>S₁ ↔ T₁ transitions</td>
+                        <td>TADF, Room-temp phosphorescence</td>
+                    </tr>
+                </table>
+                <p>These processes often <strong>compete</strong> and must be modeled simultaneously for accurate
+                    predictions.</p>
+            </div>
+        </section>
 
-    <!-- Section 3: Modeling Approaches -->
-    <section>
-      <h2>🧩 Molecular Modeling Approaches</h2>
-      <div class="content">
-        <p>Three main strategies are used to simulate aggregates:</p>
-        <div class="card-grid">
-          <div class="card">
-            <h3>Cluster Models</h3>
-            <p>Small groups (e.g., dimers) relevant to the process.</p>
-            <p><strong>✔ Pros:</strong> Computationally feasible, mechanistic insight<br>
-            <strong>❌ Cons:</strong> Misses long-range and periodic effects</p>
-          </div>
-          <div class="card">
-            <h3>Exciton Models</h3>
-            <p>Excitation treated as delocalized over chromophores.</p>
-            <p><strong>✔ Pros:</strong> Efficient for large systems, intuitive<br>
-            <strong>❌ Cons:</strong> Requires vibronic/CT corrections</p>
-          </div>
-          <div class="card">
-            <h3>Full System Models</h3>
-            <p>All atoms/molecules included explicitly.</p>
-            <p><strong>✔ Pros:</strong> Most accurate<br>
-            <strong>❌ Cons:</strong> Extremely expensive; often intractable</p>
-          </div>
-        </div>
-        <p>Embedding techniques (e.g., Ewald, continuum) improve cluster model accuracy.</p>
-      </div>
-    </section>
+        <!-- Section 3: Exciton Models & J/H Aggregates -->
+        <section>
+            <h2>📊 Exciton Models & J/H-Aggregates</h2>
+            <div class="content">
+                <p>Exciton models are based on perturbation theory using monomer excited states.</p>
 
-    <!-- Section 4: Exciton Models -->
-    <section>
-      <h2>📊 Exciton Models & Aggregate Types</h2>
-      <div class="content">
-        <p>Exciton models are based on perturbation theory using monomer excited states.</p>
-        <h3 class="section-title">Frenkel Excitons</h3>
-        <p>Localized excitation on a single chromophore. Based on <strong>Kasha’s model</strong> with Coulomb coupling.</p>
-        <p>❌ Fails for short distances and CT state mixing.</p>
+                <div class="controls">
+                    <div class="btn-group">
+                        <button id="btn-j" class="btn active">J-Aggregate</button>
+                        <button id="btn-h" class="btn">H-Aggregate</button>
+                    </div>
+                </div>
 
-        <h3 class="section-title">J- vs H-Aggregates</h3>
-        <table>
-          <tr><th>Type</th><th>Alignment</th><th>Emission</th><th>Brightness</th></tr>
-          <tr><td><strong>J-Aggregate</strong></td><td>Head-to-tail</td><td>Red-shifted</td><td>Bright (allowed)</td></tr>
-          <tr><td><strong>H-Aggregate</strong></td><td>Side-by-side</td><td>Blue-shifted</td><td>Often dark (forbidden)</td></tr>
-        </table>
-        <p>Determined by transition dipole angle: J if θ < 54.7°, H if θ > 54.7°.</p>
+                <div id="j-view">
+                    <h3 style="text-align: center; color: #e91e63; margin-top: 0;">J-Aggregate: Head-to-Tail Alignment
+                    </h3>
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <strong>Red-shifted emission</strong> • Bright lowest state • θ < 54.7° </p>
 
-        <h3 class="section-title">Advanced Exciton Models</h3>
-        <ul>
-          <li><strong>Frenkel–Holstein:</strong> Adds intramolecular vibrations (vibronic coupling)</li>
-          <li><strong>Peierls coupling:</strong> Includes intermolecular lattice modes</li>
-          <li><strong>Superexchange:</strong> Accounts for CT-mediated couplings in π-stacked systems</li>
-        </ul>
-      </div>
-    </section>
+                            <div class="diagram-container">
+                                <!-- Molecules -->
+                                <div class="molecule" style="top: 130px; left: 200px;">M1</div>
+                                <div class="molecule" style="top: 130px; left: 460px;">M2</div>
+                                <!-- TDM Arrows -->
+                                <div class="tdm-arrow"
+                                    style="width: 100px; top: 125px; left: 170px; transform: rotate(0deg);"></div>
+                                <div class="tdm-arrow"
+                                    style="width: 100px; top: 125px; left: 430px; transform: rotate(0deg);"></div>
+                                <!-- Labels -->
+                                <div class="label" style="left: 160px; top: 90px;">TDM</div>
+                                <div class="label" style="left: 420px; top: 90px;">TDM</div>
+                                <div class="label" style="left: 280px; top: 190px;">Constructive Coupling</div>
+                            </div>
+                </div>
 
-    <!-- Section 5: Electronic Structure Methods -->
-    <section>
-      <h2>🧪 Electronic Structure Methods</h2>
-      <div class="content">
-        <p>Choice of method depends on accuracy needs and system size.</p>
-        <table>
-          <tr><th>Method</th><th>Best For</th><th>Pros</th><th>Cons</th></tr>
-          <tr><td><strong>TDDFT</strong></td><td>Standard excited states</td><td>Fast, widely available</td><td>Fails for CT, double excitations</td></tr>
-          <tr><td><strong>CDFT</strong></td><td>Diabatic CT states</td><td>Natural CT description</td><td>Not for dynamics</td></tr>
-          <tr><td><strong>CASPT2/CASSCF</strong></td><td>SF, TTA, diradicals</td><td>Accurate for multiconfigurational states</td><td>Very expensive</td></tr>
-          <tr><td><strong>ADC(2)</strong></td><td>Better than TDDFT</td><td>Good for CT and double excitations</td><td>Costly for large systems</td></tr>
-        </table>
-        <p><strong>💡 Tip:</strong> Use <strong>auto-CAS</strong> or <strong>ML</strong> to automate active space selection in multiconfigurational methods.</p>
-      </div>
-    </section>
+                <div id="h-view" class="hidden">
+                    <h3 style="text-align: center; color: #3f51b5; margin-top: 0;">H-Aggregate: Side-by-Side Stacking
+                    </h3>
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <strong>Blue-shifted emission</strong> • Dark lowest state • θ > 54.7°
+                    </p>
 
-    <!-- Section 6: Dynamics & Transport -->
-    <section>
-      <h2>🌀 Excited-State Dynamics & Transport</h2>
-      <div class="content">
-        <h3 class="section-title">Dynamics Simulations</h3>
-        <ul>
-          <li><strong>Surface Hopping (FSSH, SHARC):</strong> Trajectories jump between PESs based on couplings</li>
-          <li><strong>FOB-SH:</strong> Fragment-based; simulates up to 10⁵ atoms</li>
-          <li><strong>ML Potentials:</strong> Accelerate dynamics with near ab initio accuracy</li>
-          <li><strong>GPU-Accelerated:</strong> Simulates 27+ chromophores (e.g., bacteriochlorophyll)</li>
-        </ul>
+                    <div class="diagram-container">
+                        <!-- Molecules -->
+                        <div class="molecule" style="top: 80px; left: 330px;">M1</div>
+                        <div class="molecule" style="top: 190px; left: 330px;">M2</div>
+                        <!-- TDM Arrows -->
+                        <div class="tdm-arrow" style="width: 100px; top: 75px; left: 280px; transform: rotate(90deg);">
+                        </div>
+                        <div class="tdm-arrow" style="width: 100px; top: 185px; left: 280px; transform: rotate(90deg);">
+                        </div>
+                        <!-- Labels -->
+                        <div class="label" style="left: 350px; top: 60px;">TDM</div>
+                        <div class="label" style="left: 350px; top: 170px;">TDM</div>
+                        <div class="label" style="left: 180px; top: 130px;">Destructive Coupling</div>
+                    </div>
+                </div>
 
-        <h3 class="section-title">Transport Mechanisms</h3>
-        <ul>
-          <li><strong>Förster:</strong> Long-range, dipole-dipole (weak coupling)</li>
-          <li><strong>Dexter:</strong> Short-range, electron exchange (strong orbital overlap)</li>
-          <li><strong>CT-Mediated:</strong> Important in π-stacked donor-acceptor systems</li>
-        </ul>
-        <p>FOB-SH captures transport from <strong>small to large polaron diffusion</strong>, going beyond traditional perturbative models.</p>
-      </div>
-    </section>
+                <div class="info-box">
+                    <h3>Key Features</h3>
+                    <p>• <strong>J-aggregate:</strong> Head-to-tail → red-shifted, bright emission.</p>
+                    <p>• <strong>H-aggregate:</strong> Face-to-face → blue-shifted, lowest state often dark.</p>
+                    <p>• Determined by angle <strong>θ</strong> between transition dipole and intermolecular axis: J if
+                        θ < 54.7°, H if θ> 54.7°.</p>
+                    <p>• Advanced models include vibronic and CT couplings for accuracy.</p>
+                </div>
+            </div>
+        </section>
 
-    <!-- Section 7: Conical Intersections -->
-    <section>
-      <h2>🔴 Conical Intersections (CIs)</h2>
-      <div class="content">
-        <p>CIs are degeneracies between electronic states that enable ultrafast nonradiative decay.</p>
-        <div class="card-grid">
-          <div class="card">
-            <h3>Intra-CI</h3>
-            <p>Localized on one molecule (e.g., bond twisting, proton transfer)</p>
-            <p>Leads to internal conversion (IC), emission quenching</p>
-          </div>
-          <div class="card">
-            <h3>Inter-CI</h3>
-            <p>Between molecules in the aggregate</p>
-            <p>Enables ultrafast relaxation (e.g., <40 fs in A-D-A oligomers)</p>
-          </div>
-        </div>
-        <p>Observed in 2D spectroscopy and confirmed via nonadiabatic dynamics. A <strong>global PES approach</strong> is needed to model them accurately.</p>
-      </div>
-    </section>
+        <!-- Section 4: Conical Intersections -->
+        <section>
+            <h2>🔴 Conical Intersections (CIs)</h2>
+            <div class="content">
+                <p>Conical intersections (CIs) are degeneracies between electronic states that enable ultrafast
+                    nonradiative decay.</p>
 
-    <!-- Section 8: Aggregation-Induced Emission (AIE) -->
-    <section>
-      <h2>✨ Aggregation-Induced Emission (AIE)</h2>
-      <div class="content">
-        <p>AIE is enhanced luminescence upon aggregation, opposite to ACQ (aggregation-caused quenching).</p>
-        <p>Caused by suppression of nonradiative pathways via:</p>
-        <ul>
-          <li><strong>RIM:</strong> Restriction of Intramolecular Motion</li>
-          <li><strong>RACI:</strong> Restricted Access to Conical Intersections</li>
-        </ul>
-        <p>TVCF and global PES models are used to simulate AIE. Common in propeller-shaped molecules like tetraphenylethylene (TPE).</p>
-      </div>
-    </section>
+                <div class="controls">
+                    <div class="btn-group">
+                        <button id="btn-intra" class="btn active">Intramolecular CI</button>
+                        <button id="btn-inter" class="btn">Intermolecular CI</button>
+                    </div>
+                </div>
 
-    <!-- Section 9: Machine Learning -->
-    <section>
-      <h2>🤖 Machine Learning in Excited-State Modeling</h2>
-      <div class="content">
-        <p>ML is revolutionizing the field by accelerating simulations and enabling discovery:</p>
-        <ul>
-          <li>Accelerates energy, gradient, and coupling calculations</li>
-          <li>Enables high-throughput screening of TADF, SF candidates</li>
-          <li>Predicts power conversion efficiency in OSCs</li>
-          <li>Assists in active space selection (e.g., auto-CAS)</li>
-        </ul>
-        <p>Used in conjunction with <strong>exciton models</strong>, <strong>surface hopping</strong>, and <strong>transport theories</strong> for integrated workflows.</p>
-      </div>
-    </section>
+                <div id="intra-view">
+                    <h3 style="text-align: center; color: #e91e63; margin-top: 0;">Intramolecular CI (Intra-CI)</h3>
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <strong>Localized decay</strong> • Internal conversion (IC) • Emission quenching
+                    </p>
 
-    <!-- Section 10: Conclusion -->
-    <section>
-      <h2>✅ Conclusion & Recommendations</h2>
-      <div class="content">
-        <h3 class="section-title">Key Takeaways</h3>
-        <ol>
-          <li>No single method fits all — choose based on <strong>system size</strong>, <strong>process</strong>, and <strong>accuracy</strong>.</li>
-          <li>Exciton models are powerful but must include <strong>vibronic</strong> and <strong>CT effects</strong>.</li>
-          <li>Conical intersections (intra- and intermolecular) control <strong>nonradiative decay</strong>.</li>
-          <li>Multiconfigurational methods (CASPT2) are essential for <strong>SF</strong> and <strong>TTA</strong>.</li>
-          <li>New dynamics methods (FOB-SH, ML) enable <strong>large-scale simulations</strong> beyond perturbative limits.</li>
-          <li>Integration of theory and experiment drives innovation in <strong>OLEDs</strong>, <strong>OSCs</strong>, and <strong>phosphors</strong>.</li>
-        </ol>
+                    <div class="diagram-container">
+                        <!-- PES -->
+                        <div class="pes"
+                            style="background: rgba(233, 30, 99, 0.1); left: 160px; top: 100px; z-index: 2;"></div>
+                        <div class="pes"
+                            style="background: rgba(33, 150, 243, 0.1); border-color: #2196f3; left: 240px; top: 140px; z-index: 1;">
+                        </div>
+                        <!-- CI Point -->
+                        <div class="ci-point" style="left: 320px; top: 190px;"></div>
+                        <!-- Molecule -->
+                        <div class="molecule" style="left: 180px; top: 290px;">M1</div>
+                        <!-- Labels -->
+                        <div class="label" style="left: 150px; top: 80px;">S₁ (Excited)</div>
+                        <div class="label" style="left: 230px; top: 270px;">S₀ (Ground)</div>
+                        <div class="label" style="left: 340px; top: 180px;">CI Point</div>
+                    </div>
+                </div>
 
-        <h3 class="section-title">For Students & Researchers</h3>
-        <ul>
-          <li>Start with <strong>TDDFT + dimer models</strong> for screening.</li>
-          <li>Use <strong>exciton models</strong> for optical properties and energy transfer.</li>
-          <li>Apply <strong>CDFT</strong> for CT states; <strong>CASPT2</strong> for SF/TTA.</li>
-          <li>Leverage <strong>ML tools</strong> and libraries like <code>fromage</code> (Rivera et al.) and <code>SHARC</code>.</li>
-          <li>Validate simulations with <strong>experimental spectra</strong> and <strong>device data</strong>.</li>
-        </ul>
-      </div>
-    </section>
+                <div id="inter-view" class="hidden">
+                    <h3 style="text-align: center; color: #3f51b5; margin-top: 0;">Intermolecular CI (Inter-CI)</h3>
+                    <p style="text-align: center; font-size: 1.1rem;">
+                        <strong>Collective decay</strong> • Ultrafast relaxation • Critical for SF & TTA
+                    </p>
 
-  </div>
+                    <div class="diagram-container">
+                        <!-- PES -->
+                        <div class="pes"
+                            style="background: rgba(233, 30, 99, 0.1); left: 110px; top: 100px; z-index: 2;"></div>
+                        <div class="pes"
+                            style="background: rgba(33, 150, 243, 0.1); border-color: #2196f3; left: 300px; top: 140px; z-index: 1;">
+                        </div>
+                        <!-- CI Point -->
+                        <div class="ci-point" style="left: 230px; top: 190px;"></div>
+                        <!-- Molecules -->
+                        <div class="molecule" style="left: 130px; top: 290px;">M1</div>
+                        <div class="molecule" style="left: 320px; top: 290px;">M2</div>
+                        <!-- Labels -->
+                        <div class="label" style="left: 100px; top: 80px;">S₁ (M1)</div>
+                        <div class="label" style="left: 290px; top: 270px;">S₀ (Aggregate)</div>
+                        <div class="label" style="left: 250px; top: 180px;">Inter-CI</div>
+                    </div>
+                </div>
 
-  <footer>
-    <p>📘 Educational Infographic | Based on Hernández & Crespo-Otero, <em>Annu. Rev. Phys. Chem.</em> 2023</p>
-    <p>Designed for students in computational chemistry & materials science</p>
-  </footer>
+                <div class="info-box">
+                    <h3>Key Features</h3>
+                    <p>• <strong>Intra-CI:</strong> Localized on one molecule (e.g., bond twisting); leads to emission
+                        quenching.</p>
+                    <p>• <strong>Inter-CI:</strong> Collective motion between molecules; enables ultrafast SF and TTA.
+                    </p>
+                    <p>• Suppressed in <strong>AIEgens</strong> via restricted access to CI (RACI).</p>
+                    <p>• Detected via 2D spectroscopy and nonadiabatic dynamics (e.g., FOB-SH).</p>
+                </div>
+            </div>
+        </section>
 
-  <script>
-    // Animate sections on scroll
-    const sections = document.querySelectorAll("section");
+        <!-- Section 5: Electronic Structure Methods -->
+        <section>
+            <h2>🧪 Electronic Structure Methods</h2>
+            <div class="content">
+                <p>Choice of method depends on accuracy needs and system size.</p>
+                <table>
+                    <tr>
+                        <th>Method</th>
+                        <th>Best For</th>
+                        <th>Pros</th>
+                        <th>Cons</th>
+                    </tr>
+                    <tr>
+                        <td><strong>TDDFT</strong></td>
+                        <td>Standard excited states</td>
+                        <td>Fast, widely available</td>
+                        <td>Fails for CT, double excitations</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CDFT</strong></td>
+                        <td>Diabatic CT states</td>
+                        <td>Natural CT description</td>
+                        <td>Not for dynamics</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CASPT2/CASSCF</strong></td>
+                        <td>SF, TTA, diradicals</td>
+                        <td>Accurate for multiconfigurational states</td>
+                        <td>Very expensive</td>
+                    </tr>
+                    <tr>
+                        <td><strong>ADC(2)</strong></td>
+                        <td>Better than TDDFT</td>
+                        <td>Good for CT and double excitations</td>
+                        <td>Costly for large systems</td>
+                    </tr>
+                </table>
+                <p><strong>💡 Tip:</strong> Use <strong>auto-CAS</strong> or <strong>ML</strong> to automate active
+                    space selection in multiconfigurational methods.</p>
+            </div>
+        </section>
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
+        <!-- Section 6: Dynamics & Transport -->
+        <section>
+            <h2>🌀 Excited-State Dynamics & Transport</h2>
+            <div class="content">
+                <h3 class="section-title">Dynamics Simulations</h3>
+                <ul>
+                    <li><strong>Surface Hopping (FSSH, SHARC):</strong> Trajectories jump between PESs based on
+                        couplings</li>
+                    <li><strong>FOB-SH:</strong> Fragment-based; simulates up to 10⁵ atoms</li>
+                    <li><strong>ML Potentials:</strong> Accelerate dynamics with near ab initio accuracy</li>
+                    <li><strong>GPU-Accelerated:</strong> Simulates 27+ chromophores (e.g., bacteriochlorophyll)</li>
+                </ul>
+
+                <h3 class="section-title">Transport Mechanisms</h3>
+                <ul>
+                    <li><strong>Förster:</strong> Long-range, dipole-dipole (weak coupling)</li>
+                    <li><strong>Dexter:</strong> Short-range, electron exchange (strong orbital overlap)</li>
+                    <li><strong>CT-Mediated:</strong> Important in π-stacked donor-acceptor systems</li>
+                </ul>
+                <p>FOB-SH captures transport from <strong>small to large polaron diffusion</strong>, going beyond
+                    traditional perturbative models.</p>
+            </div>
+        </section>
+
+        <!-- Section 7: Conclusion -->
+        <section>
+            <h2>✅ Conclusion & Recommendations</h2>
+            <div class="content">
+                <h3 class="section-title">Key Takeaways</h3>
+                <ol>
+                    <li>No single method fits all — choose based on <strong>system size</strong>,
+                        <strong>process</strong>, and <strong>accuracy</strong>.</li>
+                    <li>Exciton models are powerful but must include <strong>vibronic</strong> and <strong>CT
+                            effects</strong>.</li>
+                    <li>Conical intersections (intra- and intermolecular) control <strong>nonradiative decay</strong>.
+                    </li>
+                    <li>Multiconfigurational methods (CASPT2) are essential for <strong>SF</strong> and
+                        <strong>TTA</strong>.</li>
+                    <li>New dynamics methods (FOB-SH, ML) enable <strong>large-scale simulations</strong> beyond
+                        perturbative limits.</li>
+                    <li>Integration of theory and experiment drives innovation in <strong>OLEDs</strong>,
+                        <strong>OSCs</strong>, and <strong>phosphors</strong>.</li>
+                </ol>
+
+                <h3 class="section-title">For Students & Researchers</h3>
+                <ul>
+                    <li>Start with <strong>TDDFT + dimer models</strong> for screening.</li>
+                    <li>Use <strong>exciton models</strong> for optical properties and energy transfer.</li>
+                    <li>Apply <strong>CDFT</strong> for CT states; <strong>CASPT2</strong> for SF/TTA.</li>
+                    <li>Leverage <strong>ML tools</strong> and libraries like <code>fromage</code> (Rivera et al.) and
+                        <code>SHARC</code>.</li>
+                    <li>Validate simulations with <strong>experimental spectra</strong> and <strong>device
+                            data</strong>.</li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>📘 Educational Infographic | Based on Hernández & Crespo-Otero, <em>Annu. Rev. Phys. Chem.</em> 2023</p>
+        <p>Designed for students in computational chemistry & materials science</p>
+    </footer>
+
+    <script>
+        // Animate sections on scroll
+        const sections = document.querySelectorAll("section:not(.visible)");
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+            });
+        }, { threshold: 0.1 });
+        sections.forEach(section => observer.observe(section));
+
+        // J/H-Aggregate Toggle
+        const btnJ = document.getElementById("btn-j");
+        const btnH = document.getElementById("btn-h");
+        const jView = document.getElementById("j-view");
+        const hView = document.getElementById("h-view");
+
+        btnJ.addEventListener("click", () => {
+            btnJ.classList.add("active");
+            btnH.classList.remove("active");
+            jView.classList.remove("hidden");
+            hView.classList.add("hidden");
         });
-      },
-      { threshold: 0.1 }
-    );
 
-    sections.forEach((section) => {
-      observer.observe(section);
-    });
+        btnH.addEventListener("click", () => {
+            btnH.classList.add("active");
+            btnJ.classList.remove("active");
+            hView.classList.remove("hidden");
+            jView.classList.add("hidden");
+        });
 
-    // Trigger initial visibility for already-in-view sections
-    window.addEventListener("load", () => {
-      sections.forEach((section) => {
-        if (isInViewport(section)) {
-          section.classList.add("visible");
-        }
-      });
-    });
+        // CI Toggle
+        const btnIntra = document.getElementById("btn-intra");
+        const btnInter = document.getElementById("btn-inter");
+        const intraView = document.getElementById("intra-view");
+        const interView = document.getElementById("inter-view");
 
-    function isInViewport(element) {
-      const rect = element.getBoundingClientRect();
-      return (
-        rect.top <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.bottom >= 0
-      );
-    }
-  </script>
+        btnIntra.addEventListener("click", () => {
+            btnIntra.classList.add("active");
+            btnInter.classList.remove("active");
+            intraView.classList.remove("hidden");
+            interView.classList.add("hidden");
+        });
+
+        btnInter.addEventListener("click", () => {
+            btnInter.classList.add("active");
+            btnIntra.classList.remove("active");
+            interView.classList.remove("hidden");
+            intraView.classList.add("hidden");
+        });
+    </script>
 
 </body>
+
 </html>
