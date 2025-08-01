@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.css" integrity="sha384-XdYbqaQJoIj8u8oHYfFq2pHvniR2wO1tFfxgMRfvlztnUqbXVg/psZQOA" crossorigin="anonymous">
+	<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.7/dist/katex.min.js" integrity="sha384-G0zwSjoRfWOWDRYTGgPgCu0PfwPRg32大写字体"> </script>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Electronic Structure Methods: TDDFT vs TDA vs sTDA</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --tddft: #2c3e50;
+            --tddft-light: #3498db;
+            --tddft-dark: #1a2530;
+            --tda: #27ae60;
+            --tda-light: #2ecc71;
+            --tda-dark: #165b33;
+            --stda: #e67e22;
+            --stda-light: #f39c12;
+            --stda-dark: #a04d00;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --light-text: #7f8c8d;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(120deg, var(--tddft-dark), var(--tda-dark), var(--stda-dark));
+            color: white;
+            padding: 40px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(52, 152, 219, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(46, 204, 113, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(243, 156, 18, 0.05) 0%, transparent 30%);
+            z-index: 0;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 3.2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.4rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .method-tags {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .tag {
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .tag.tddft {
+            background: var(--tddft-light);
+            color: white;
+        }
+
+        .tag.tda {
+            background: var(--tda-light);
+            color: white;
+        }
+
+        .tag.stda {
+            background: var(--stda-light);
+            color: white;
+        }
+
+        /* Introduction Section */
+        .intro-section {
+            background: white;
+            padding: 60px 0;
+            position: relative;
+            margin-top: -40px;
+            z-index: 2;
+            border-radius: 20px 20px 0 0;
+            box-shadow: var(--shadow);
+        }
+
+        .intro-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .intro-content h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            color: var(--text);
+            margin-bottom: 25px;
+        }
+
+        .intro-content p {
+            font-size: 1.15rem;
+            color: var(--light-text);
+            margin-bottom: 20px;
+        }
+
+        .key-insight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid var(--tddft-light);
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 25px auto;
+            max-width: 700px;
+        }
+
+        .key-insight p {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--tddft);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .key-insight p i {
+            font-size: 1.4rem;
+        }
+
+        /* Method Cards */
+        .methods-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .method-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            z-index: 1;
+        }
+
+        .method-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .method-header {
+            padding: 25px;
+            color: white;
+            text-align: center;
+        }
+
+        .tddft .method-header {
+            background: linear-gradient(135deg, var(--tddft), var(--tddft-dark));
+        }
+
+        .tda .method-header {
+            background: linear-gradient(135deg, var(--tda), var(--tda-dark));
+        }
+
+        .stda .method-header {
+            background: linear-gradient(135deg, var(--stda), var(--stda-dark));
+        }
+
+        .method-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .method-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .method-tagline {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .method-body {
+            padding: 25px;
+        }
+
+        .method-body h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text);
+            margin: 20px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .method-body h3 i {
+            color: var(--tddft-light);
+        }
+
+        .tddft .method-body h3 i { color: var(--tddft-light); }
+        .tda .method-body h3 i { color: var(--tda-light); }
+        .stda .method-body h3 i { color: var(--stda-light); }
+
+        .method-body ul {
+            padding-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .method-body li {
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .method-body li::before {
+            content: "•";
+            color: var(--tddft-light);
+            font-weight: bold;
+            position: absolute;
+            left: -15px;
+            width: 12px;
+        }
+
+        .tddft li::before { color: var(--tddft-light); }
+        .tda li::before { color: var(--tda-light); }
+        .stda li::before { color: var(--stda-light); }
+
+        .comparison-section {
+            background: white;
+            padding: 70px 0;
+            margin: 40px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--text);
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tddft-light), var(--tda-light), var(--stda-light));
+            border-radius: 2px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .comparison-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .comparison-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            text-align: center;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            border-bottom: 2px dashed #eee;
+        }
+
+        .tddft h3 { color: var(--tddft); }
+        .tda h3 { color: var(--tda); }
+        .stda h3 { color: var(--stda); }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th {
+            background: #f1f5f9;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .comparison-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: #f8fafd;
+        }
+
+        .highlight {
+            font-weight: 700;
+            color: var(--tddft);
+        }
+
+        .tddft .highlight { color: var(--tddft); }
+        .tda .highlight { color: var(--tda); }
+        .stda .highlight { color: var(--stda); }
+
+        /* Decision Flow */
+        .decision-section {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e3f2fd 100%);
+            padding: 70px 0;
+            border-radius: 20px;
+            margin: 50px 0;
+        }
+
+        .flowchart {
+            max-width: 900px;
+            margin: 40px auto;
+            position: relative;
+        }
+
+        .flow-step {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 2;
+            border-left: 4px solid var(--tddft);
+        }
+
+        .flow-step.tda { border-left-color: var(--tda); }
+        .flow-step.stda { border-left-color: var(--stda); }
+
+        .flow-step h3 {
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .flow-step p {
+            color: var(--light-text);
+            margin-left: 40px;
+        }
+
+        .flow-arrow {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--tddft-light);
+            margin: 15px 0;
+        }
+
+        .flow-arrow i {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-15px);}
+            60% {transform: translateY(-10px);}
+        }
+
+        /* Visualization */
+        .visualization {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .vis-card {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .vis-header {
+            padding: 20px;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.5rem;
+            background: #f8fafd;
+            color: var(--text);
+        }
+
+        .vis-content {
+            padding: 25px;
+        }
+
+        .scaling-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .scaling-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .scaling-label {
+            width: 120px;
+            font-weight: 600;
+        }
+
+        .scaling-bar {
+            flex: 1;
+            height: 25px;
+            background: #e0e6ed;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tddft .bar-fill { background: linear-gradient(90deg, var(--tddft-light), var(--tddft)); width: 100%; }
+        .tda .bar-fill { background: linear-gradient(90deg, var(--tda-light), var(--tda)); width: 70%; }
+        .stda .bar-fill { background: linear-gradient(90deg, var(--stda-light), var(--stda)); width: 20%; }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .accuracy-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .accuracy-item {
+            background: #f8fafd;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .accuracy-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .tddft .accuracy-value { color: var(--tddft); }
+        .tda .accuracy-value { color: var(--tda); }
+        .stda .accuracy-value { color: var(--stda); }
+
+        /* Conclusion */
+        .conclusion {
+            background: linear-gradient(135deg, var(--tddft-dark), #1e3a5f);
+            color: white;
+            padding: 60px 0;
+            border-radius: 20px;
+            margin: 50px 0;
+        }
+
+        .conclusion-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .conclusion h2 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 25px;
+        }
+
+        .tips {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .tip-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            width: 250px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tip-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .tip-card h3 {
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Footer */
+        footer {
+            background: #1e2a38;
+            color: #a0aec0;
+            padding: 30px 0 50px;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .resource-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .resource-link {
+            color: #90cdf4;
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .resource-link:hover {
+            color: #63b3ed;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            margin-top: 25px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.3rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .methods-grid, .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .method-body ul {
+                padding-left: 15px;
+            }
+            
+            .method-body li {
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 30px 0 60px;
+            }
+            
+            h1 {
+                font-size: 1.9rem;
+            }
+            
+            .tag {
+                padding: 6px 15px;
+                font-size: 0.95rem;
+            }
+            
+            .method-icon {
+                font-size: 2.8rem;
+            }
+            
+            .method-title {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>Electronic Structure Methods<br>Decoded</h1>
+                <p class="subtitle">A visual guide to understanding TDDFT, TDA, and sTDA for electronic excitation calculations</p>
+                
+                <div class="method-tags">
+                    <div class="tag tddft"><i class="fas fa-brain"></i> TDDFT</div>
+                    <div class="tag tda"><i class="fas fa-project-diagram"></i> TDA</div>
+                    <div class="tag stda"><i class="fas fa-bolt"></i> sTDA</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Introduction Section -->
+    <section class="intro-section">
+        <div class="container">
+            <div class="intro-content">
+                <h2>Why These Methods Matter</h2>
+                <p>TDDFT, TDA, and sTDA are computational techniques used to calculate electronic excitation energies - essential for predicting UV-Vis spectra, photochemical behavior, and optical properties of molecules.</p>
+                
+                <div class="key-insight">
+                    <p><i class="fas fa-lightbulb"></i> TDA is not a standalone theory - it's an approximation within TDDFT. sTDA is a radically simplified model designed for massive systems.</p>
+                </div>
+                
+                <p>While all three methods solve the same fundamental problem, they differ dramatically in computational approach, cost, and applicability. This guide breaks down exactly when and why to use each method.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Method Comparison Cards -->
+    <section class="container">
+        <div class="methods-grid">
+            <!-- TDDFT Card -->
+            <div class="method-card tddft">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h2 class="method-title">TDDFT</h2>
+                    <p class="method-tagline">Time-Dependent Density Functional Theory</p>
+                </div>
+                <div class="method-body">
+                    <h3><i class="fas fa-theater-masks"></i> Core Concept</h3>
+                    <p>Solves full time-dependent Kohn-Sham equations using linear response theory. Considers both excitations and de-excitations.</p>
+                    
+                    <h3><i class="fas fa-calculator"></i> Mathematical Formulation</h3>
+                    <ul>
+                        <li>Solves full Casida equation: <span class="highlight">$$\begin{pmatrix} A & B \\ B^* & A^* \end{pmatrix} \begin{pmatrix} X \\ Y \end{pmatrix} = \omega \begin{pmatrix} X \\ -Y \end{pmatrix}$$</span></li>
+                        <li><span class="highlight">A</span> = Resonant terms (electron promotion)</li>
+                        <li><span class="highlight">B</span> = Anti-resonant terms (de-excitations)</li>
+                        <li>Non-Hermitian matrix problem (4N² × 4N²)</li>
+                    </ul>
+                    
+                    <h3><i class="fas fa-flask"></i> Best For</h3>
+                    <p>Small to medium molecules (up to 100 atoms) where high accuracy is needed for valence excitations.</p>
+                </div>
+            </div>
+            
+            <!-- TDA Card -->
+            <div class="method-card tda">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h2 class="method-title">TDA</h2>
+                    <p class="method-tagline">Tamm-Dancoff Approximation</p>
+                </div>
+                <div class="method-body">
+                    <h3><i class="fas fa-theater-masks"></i> Core Concept</h3>
+                    <p>Simplified version of TDDFT that ignores de-excitation terms. Not a standalone theory - an approximation within TDDFT.</p>
+                    
+                    <h3><i class="fas fa-calculator"></i> Mathematical Formulation</h3>
+                    <ul>
+                        <li>Sets <span class="highlight">B = 0</span> in Casida equation: <span class="highlight">$$A X = \omega X$$</span></li>
+                        <li>Only considers single excitations (<i>i → a</i>)</li>
+                        <li>Hermitian matrix problem (N² × N²)</li>
+                        <li>Fixes TDDFT's poor treatment of charge-transfer states</li>
+                    </ul>
+                    
+                    <h3><i class="fas fa-flask"></i> Best For</h3>
+                    <p>Medium-sized molecules (100-500 atoms) with charge-transfer excitations or triplet states.</p>
+                </div>
+            </div>
+            
+            <!-- sTDA Card -->
+            <div class="method-card stda">
+                <div class="method-header">
+                    <div class="method-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h2 class="method-title">sTDA</h2>
+                    <p class="method-tagline">simplified Tamm-Dancoff Approximation</p>
+                </div>
+                <div class="method-body">
+                    <h3><i class="fas fa-theater-masks"></i> Core Concept</h3>
+                    <p>Ultra-fast semi-empirical method that replaces quantum integrals with parametrized functions.</p>
+                    
+                    <h3><i class="fas fa-calculator"></i> Mathematical Formulation</h3>
+                    <ul>
+                        <li>No explicit DFT calculation - uses precomputed parameters</li>
+                        <li>Excitation energy: <span class="highlight">$$\omega_{\text{sTDA}} = \sqrt{ \sum_{\mu<\nu} \frac{S_{\mu\nu}^2}{R_{\mu\nu}^6} }$$</span></li>
+                        <li>Minimal basis sets, point charge approximations</li>
+                        <li>Ignores exchange, correlation, and orbital relaxation</li>
+                    </ul>
+                    
+                    <h3><i class="fas fa-flask"></i> Best For</h3>
+                    <p>Very large systems (1,000+ atoms) like proteins, nanomaterials, and high-throughput screening.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comparison Section -->
+    <section class="comparison-section">
+        <div class="container">
+            <h2 class="section-title">Side-by-Side Comparison</h2>
+            
+            <div class="comparison-grid">
+                <div class="comparison-card tddft">
+                    <h3>Theoretical Foundation</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>TDDFT</th>
+                        </tr>
+                        <tr>
+                            <td>Physics Captured</td>
+                            <td>Full electron-hole interactions & ground-state correlations</td>
+                        </tr>
+                        <tr>
+                            <td>Double Excitations</td>
+                            <td>Theoretically possible (but often poor in practice)</td>
+                        </tr>
+                        <tr>
+                            <td>Charge-Transfer States</td>
+                            <td>Poor (without range-separated functionals)</td>
+                        </tr>
+                        <tr>
+                            <td>Triplet States</td>
+                            <td>Problematic</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="comparison-card tda">
+                    <h3>Theoretical Foundation</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>TDA</th>
+                        </tr>
+                        <tr>
+                            <td>Physics Captured</td>
+                            <td>Single excitations only (ignores ground-state correlations)</td>
+                        </tr>
+                        <tr>
+                            <td>Double Excitations</td>
+                            <td>Misses completely</td>
+                        </tr>
+                        <tr>
+                            <td>Charge-Transfer States</td>
+                            <td>Much improved over TDDFT</td>
+                        </tr>
+                        <tr>
+                            <td>Triplet States</td>
+                            <td>Accurate</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div class="comparison-card stda">
+                    <h3>Theoretical Foundation</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>Aspect</th>
+                            <th>sTDA</th>
+                        </tr>
+                        <tr>
+                            <td>Physics Captured</td>
+                            <td>Long-range electrostatic interactions only</td>
+                        </tr>
+                        <tr>
+                            <td>Double Excitations</td>
+                            <td>No</td>
+                        </tr>
+                        <tr>
+                            <td>Charge-Transfer States</td>
+                            <td>Moderate (only long-range)</td>
+                        </tr>
+                        <tr>
+                            <td>Triplet States</td>
+                            <td>Poor</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visualization Section -->
+    <section class="container">
+        <div class="visualization">
+            <div class="vis-card">
+                <div class="vis-header">Computational Scaling</div>
+                <div class="vis-content">
+                    <p>How calculation time increases with system size:</p>
+                    
+                    <div class="scaling-chart">
+                        <div class="scaling-item">
+                            <div class="scaling-label">TDDFT</div>
+                            <div class="scaling-bar">
+                                <div class="bar-fill tddft">O(N⁴) to O(N⁶)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="scaling-item">
+                            <div class="scaling-label">TDA</div>
+                            <div class="scaling-bar">
+                                <div class="bar-fill tda">O(N⁴) (30% faster)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="scaling-item">
+                            <div class="scaling-label">sTDA</div>
+                            <div class="scaling-bar">
+                                <div class="bar-fill stda">O(N²) to O(N³)</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p><strong>Example:</strong> For a 100-atom system:<br>
+                    TDDFT: Hours • TDA: ~30% faster • sTDA: Minutes</p>
+                </div>
+            </div>
+            
+            <div class="vis-card">
+                <div class="vis-header">Accuracy Profile</div>
+                <div class="vis-content">
+                    <p>Relative strengths for different excitation types:</p>
+                    
+                    <div class="accuracy-grid">
+                        <div class="accuracy-item">
+                            <div>Valence Excitations</div>
+                            <div class="accuracy-value tddft">★★★★★</div>
+                            <div>TDDFT excels here</div>
+                        </div>
+                        
+                        <div class="accuracy-item">
+                            <div>Charge-Transfer</div>
+                            <div class="accuracy-value tda">★★★★☆</div>
+                            <div>TDA handles best</div>
+                        </div>
+                        
+                        <div class="accuracy-item">
+                            <div>Triplet States</div>
+                            <div class="accuracy-value tda">★★★★★</div>
+                            <div>TDA is most reliable</div>
+                        </div>
+                        
+                        <div class="accuracy-item">
+                            <div>Large Systems</div>
+                            <div class="accuracy-value stda">★★★☆☆</div>
+                            <div>sTDA enables feasibility</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Decision Flow -->
+    <section class="decision-section">
+        <div class="container">
+            <h2 class="section-title">Which Method Should You Use?</h2>
+            
+            <div class="flowchart">
+                <div class="flow-step">
+                    <h3><i class="fas fa-question-circle"></i> What's your system size?</h3>
+                    <p>• Small molecule (< 100 atoms)<br>
+                    • Medium molecule (100-500 atoms)<br>
+                    • Large system (> 500 atoms)</p>
+                </div>
+                
+                <div class="flow-arrow">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                
+                <div class="flow-step tda">
+                    <h3><i class="fas fa-cogs"></i> Small molecule?</h3>
+                    <p>→ Use <span class="highlight">TDDFT</span> with hybrid functional (e.g., B3LYP)<br>
+                    → If charge-transfer states: switch to <span class="highlight">TDA</span></p>
+                </div>
+                
+                <div class="flow-arrow">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                
+                <div class="flow-step tda">
+                    <h3><i class="fas fa-cogs"></i> Medium molecule?</h3>
+                    <p>→ <span class="highlight">TDA</span> is ideal (avoids TDDFT errors, feasible cost)<br>
+                    → Avoid full TDDFT (too expensive)</p>
+                </div>
+                
+                <div class="flow-arrow">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                
+                <div class="flow-step stda">
+                    <h3><i class="fas fa-cogs"></i> Large system?</h3>
+                    <p>→ <span class="highlight">sTDA</span> is the only practical choice<br>
+                    → TDDFT/TDA would take months; sTDA takes hours</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conclusion Section -->
+    <section class="conclusion">
+        <div class="container">
+            <div class="conclusion-content">
+                <h2>Key Takeaways</h2>
+                <p>Understanding these methods helps you choose the right tool for your computational chemistry needs. Remember:</p>
+                
+                <div class="tips">
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>TDDFT</h3>
+                        <p>Gold standard for small molecules but struggles with charge-transfer states</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>TDA</h3>
+                        <p>Fixes TDDFT's flaws for medium systems - often more accurate than full TDDFT</p>
+                    </div>
+                    
+                    <div class="tip-card">
+                        <div class="tip-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <h3>sTDA</h3>
+                        <p>Ultra-fast for huge systems but sacrifices quantum accuracy for speed</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <h3>Electronic Structure Methods Infographic</h3>
+                <p>Created for computational chemistry students and researchers</p>
+                
+                <div class="resource-links">
+                    <a href="#" class="resource-link"><i class="fas fa-book"></i> Textbook Reference</a>
+                    <a href="#" class="resource-link"><i class="fas fa-video"></i> Tutorial Video</a>
+                    <a href="#" class="resource-link"><i class="fas fa-download"></i> Method Cheat Sheet</a>
+                    <a href="#" class="resource-link"><i class="fas fa-chart-line"></i> Performance Benchmarks</a>
+                </div>
+                
+                <p class="copyright">© 2023 Computational Chemistry Education Project | This infographic simplifies complex concepts for educational purposes</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Add interactive hover effects to method tags
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                // Remove active class from all tags
+                document.querySelectorAll('.tag').forEach(t => {
+                    t.style.transform = 'translateY(0)';
+                });
+                
+                // Add active effect
+                this.style.transform = 'translateY(-5px)';
+                
+                // Scroll to relevant section
+                const method = this.classList[1];
+                const section = document.querySelector(`.${method} .method-body`);
+                if (section) {
+                    window.scrollTo({
+                        top: section.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Animate comparison cards on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.comparison-card, .vis-card').forEach(card => {
+            card.style.opacity = 0;
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
