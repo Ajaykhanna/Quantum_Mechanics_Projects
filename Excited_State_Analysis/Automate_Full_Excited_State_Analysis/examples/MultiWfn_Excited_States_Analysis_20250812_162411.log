@@ -1,0 +1,1494 @@
+=== Starting Excited-State Analysis @ Tue Aug 12 16:24:11 MDT 2025 ===
+Multiwfn binary : /vast/home/akhanna2/data/software/Multiwfn_3.8_dev_bin_Linux/Multiwfn
+Formatted chk   : SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk
+Gaussian log    : SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+States          : 1-3
+Fragments (N)   : 3
+  Fragment_1    : 25-27
+  Fragment_2    : 6,12-13,16-19,22-24
+  Fragment_3    : 1-5,7-11,14-15,20-21
+Output log      : MultiWfn_Excited_States_Analysis_20250812_162411.log
+Required files  :
+  - SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk
+  - SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+
+--- Running Multiwfn for State 1 ---
+[DEBUG] IFCT fragments → stdin (State 1):
+  > 3
+  > 25-27
+  > 6,12-13,16-19,22-24
+  > 1-5,7-11,14-15,20-21
+[DEBUG] CTS fragments → stdin (State 1):
+  > 3
+  > 25-27
+  > 6,12-13,16-19,22-24
+  > 1-5,7-11,14-15,20-21
+ Multiwfn -- A Multifunctional Wavefunction Analyzer
+ Version 3.8(dev), update date: 2025-Feb-4
+ Developer: Tian Lu (Beijing Kein Research Center for Natural Sciences)
+ Multiwfn official website: http://sobereva.com/multiwfn
+ Multiwfn English forum: http://sobereva.com/wfnbbs
+ Multiwfn Chinese forum: http://bbs.keinsci.com/wfn
+ Both following papers ***MUST BE CITED IN MAIN TEXT*** if Multiwfn is used:
+          Tian Lu, Feiwu Chen, J. Comput. Chem., 33, 580-592 (2012)
+          Tian Lu, J. Chem. Phys., 161, 082503 (2024)
+ See "How to cite Multiwfn.pdf" in Multiwfn binary package for more information
+
+ ( Number of parallel threads:  32  Current date: 2025-08-12  Time: 16:24:11 )
+ 
+ Please wait...
+ Loading various information of the wavefunction
+ The highest angular moment basis functions is D
+ Loading basis set definition...
+ Loading orbitals...
+ Converting basis function information to GTF information...
+ Generating density matrix based on SCF orbitals...
+ Generating overlap matrix...
+ 
+ Total/Alpha/Beta electrons:    132.0000     66.0000     66.0000
+ Net charge:     0.00000      Expected multiplicity:    1
+ Atoms:     27,  Basis functions:    301,  GTFs:    564
+ Total energy:    -906.065403183211 Hartree,   Virial ratio:  2.00861347
+ This is a restricted single-determinant wavefunction
+ Orbitals from 1 to    66 are occupied
+ Title line of this file: p_nitro_biphenyl_single_nbd_aniline_derivative
+
+ Loaded SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk successfully!
+ 
+ Formula: H8 C12 N4 O3      Total atoms:      27
+ Molecule weight:       256.21738 Da
+ Point group: C1 
+ 
+ "q": Exit program gracefully          "r": Load a new file
+                    ************ Main function menu ************
+ 0 Show molecular structure and view orbitals
+ 1 Output all properties at a point       2 Topology analysis
+ 3 Output and plot specific property in a line
+ 4 Output and plot specific property in a plane
+ 5 Output and plot specific property within a spatial region (calc. grid data)
+ 6 Check & modify wavefunction
+ 7 Population analysis and calculation of atomic charges
+ 8 Orbital composition analysis           9 Bond order analysis
+ 10 Plot total DOS, PDOS, OPDOS, local DOS, COHP and photoelectron spectrum
+ 11 Plot IR/Raman/UV-Vis/ECD/VCD/ROA/NMR spectrum
+ 12 Quantitative analysis of molecular surface
+ 13 Process grid data (No grid data is presented currently)
+ 14 Adaptive natural density partitioning (AdNDP) analysis
+ 15 Fuzzy atomic space analysis
+ 16 Charge decomposition analysis (CDA) and plot orbital interaction diagram
+ 17 Basin analysis                       18 Electron excitation analysis
+ 19 Orbital localization analysis        20 Visual study of weak interaction
+ 21 Energy decomposition analysis        22 Conceptual DFT (CDFT) analysis
+ 23 ETS-NOCV analysis                    24 (Hyper)polarizability analysis
+ 25 Electron delocalization and aromaticity analyses
+ 26 Structure and geometry related analyses
+ 100 Other functions (Part 1)            200 Other functions (Part 2)
+ 300 Other functions (Part 3)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Please input path of Gaussian/ORCA output file or plain text file, electron excitation information will be loaded from this file
+ e.g. C:\lovelive\sunshine\yosoro.out
+ Hint: If pressing ENTER button directly, the file with identical name as input file but with .out or .log suffix will be loaded
+ Note: This file is recognized as a Gaussian output file
+ There are   10 excited states, loading basic information...
+ 
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   1...
+ The sum of square of excitation coefficients:  0.499995
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499995
+ Deviation to expected normalization value (0.5) is  0.000005
+ Involved highest unoccupied orbital:   288 (HOMO+   222)
+ 
+ The highest 10 eigenvalues of NTO pairs:
+    0.977637    0.010214    0.001700    0.001359    0.001124
+    0.001013    0.000805    0.000679    0.000575    0.000515
+ Sum of all eigenvalues:  0.995620
+ 
+ 0 Return
+ 1 Output NTO orbitals to .molden file
+ 2 Output NTO orbitals to .fch file
+ 3 Output NTO orbitals to .mwfn file (recommended)
+ Input the file path to output, e.g. C:\S1.mwfn
+ Exporting .mwfn file finished!
+ Now you can load the newly generated file to visualize NTOs. Note that in this file the orbital energies correspond to NTO eigenvalues
+ 
+ Reloading SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk to recover initial status...
+ Loading finished!
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Initializing data, please wait...
+ 
+ Please input path of Gaussian/ORCA output file or plain text file, electron excitation information will be loaded from this file
+ e.g. C:\lovelive\sunshine\yosoro.out
+ Hint: If pressing ENTER button directly, the file with identical name as input file but with .out or .log suffix will be loaded
+ Note: This file is recognized as a Gaussian output file
+ There are   10 excited states, loading basic information...
+ 
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Please input index of the excited states that you want to calculate delta_r
+ e.g. 1-6,10,15-20
+ Note: If only one state is selected, the delta_r can be further decomposed as orbital pair contribution
+ Calculating, please wait...
+ 
+ Loading configuration coefficients of excited state   1...
+ The sum of square of excitation coefficients:  0.499995
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499995
+ Deviation to expected normalization value (0.5) is  0.000005
+ Involved highest unoccupied orbital:   288 (HOMO+   222)
+ Excited state    1:   Delta_r =    7.858624 Bohr,    4.158605 Angstrom
+ 
+ If printing orbital pair contributions to delta_r? (y/n)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Calculating overlap matrix between MOs, please wait patiently...
+ Note: The default number of integration grids in general should be sufficient. If you want to change, set "iautointgrid" in settings.ini to 0, and set "radpot" and "sphpot" to proper values
+ Radial points:   15    Angular points:  170   Total:      2550 per center
+ Progress: [#-------------------------------------------------]     3.7 %     -
+ Progress: [###-----------------------------------------------]     7.4 %     \
+ Progress: [#####---------------------------------------------]    11.1 %     |
+ Progress: [#######-------------------------------------------]    14.8 %     /
+ Progress: [#########-----------------------------------------]    18.5 %     -
+ Progress: [###########---------------------------------------]    22.2 %     \
+ Progress: [############--------------------------------------]    25.9 %     |
+ Progress: [##############------------------------------------]    29.6 %     /
+ Progress: [################----------------------------------]    33.3 %     -
+ Progress: [##################--------------------------------]    37.0 %     \
+ Progress: [####################------------------------------]    40.7 %     |
+ Progress: [######################----------------------------]    44.4 %     /
+ Progress: [########################--------------------------]    48.1 %     -
+ Progress: [#########################-------------------------]    51.9 %     \
+ Progress: [###########################-----------------------]    55.6 %     |
+ Progress: [#############################---------------------]    59.3 %     /
+ Progress: [###############################-------------------]    63.0 %     -
+ Progress: [#################################-----------------]    66.7 %     \
+ Progress: [###################################---------------]    70.4 %     |
+ Progress: [#####################################-------------]    74.1 %     /
+ Progress: [######################################------------]    77.8 %     -
+ Progress: [########################################----------]    81.5 %     \
+ Progress: [##########################################--------]    85.2 %     |
+ Progress: [############################################------]    88.9 %     /
+ Progress: [##############################################----]    92.6 %     -
+ Progress: [################################################--]    96.3 %     \
+ Progress: [##################################################]   100.0 %     |
+ 
+ Preparation finished! Calculation took up time         4 s
+ 
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Please input index of the excited states that you want to calculate lambda
+ e.g. 1-6,10,15-20
+ Note: If only one state is selected, the lambda can be further decomposed as orbital pair contribution
+ Calculating, please wait...
+ 
+ Loading configuration coefficients of excited state   1...
+ The sum of square of excitation coefficients:  0.499995
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499995
+ Deviation to expected normalization value (0.5) is  0.000005
+ Involved highest unoccupied orbital:   288 (HOMO+   222)
+ Excited state    1:   lambda =    0.525028
+ 
+ If printing orbital pair contributions to lambda? (y/n)
+ 
+ Do the lambda analysis again? (y/n)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Select the method for calculating hole and electron composition
+ 1 Mulliken-like partition (very fast, but incompatible with diffuse functions)
+ 2 Hirshfeld partition (slow, but very robust)
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   1...
+ The sum of square of excitation coefficients:  0.499995
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499995
+ Deviation to expected normalization value (0.5) is  0.000005
+ Involved highest unoccupied orbital:   288 (HOMO+   222)
+ Evaluating atomic contributions...
+ Radial grids:   75    Angular grids:  434   Total:     32550
+ Progress: [#-------------------------------------------------]     3.7 %     /
+ Progress: [###-----------------------------------------------]     7.4 %     -
+ Progress: [#####---------------------------------------------]    11.1 %     \
+ Progress: [#######-------------------------------------------]    14.8 %     |
+ Progress: [#########-----------------------------------------]    18.5 %     /
+ Progress: [###########---------------------------------------]    22.2 %     -
+ Progress: [############--------------------------------------]    25.9 %     \
+ Progress: [##############------------------------------------]    29.6 %     |
+ Progress: [################----------------------------------]    33.3 %     /
+ Progress: [##################--------------------------------]    37.0 %     -
+ Progress: [####################------------------------------]    40.7 %     \
+ Progress: [######################----------------------------]    44.4 %     |
+ Progress: [########################--------------------------]    48.1 %     /
+ Progress: [#########################-------------------------]    51.9 %     -
+ Progress: [###########################-----------------------]    55.6 %     \
+ Progress: [#############################---------------------]    59.3 %     |
+ Progress: [###############################-------------------]    63.0 %     /
+ Progress: [#################################-----------------]    66.7 %     -
+ Progress: [###################################---------------]    70.4 %     \
+ Progress: [#####################################-------------]    74.1 %     |
+ Progress: [######################################------------]    77.8 %     /
+ Progress: [########################################----------]    81.5 %     -
+ Progress: [##########################################--------]    85.2 %     \
+ Progress: [############################################------]    88.9 %     |
+ Progress: [##############################################----]    92.6 %     /
+ Progress: [################################################--]    96.3 %     -
+ Progress: [##################################################]   100.0 %     \
+ 
+ Sum of hole: 1.0000148   Sum of electron: 0.9999997
+ Calculation took up time         6 s
+ 
+ How many fragments to be defined? e.g. 3
+ Note: If you input 0, then fragment definition will be loaded from an external file. If you input -1, then atom-atom charge transfer matrix will be exported to atmCTmat.txt in current folder
+ Input atom indices for fragment   1, e.g. 1,4,8-12,15
+ Input atom indices for fragment   2, e.g. 1,4,8-12,15
+ Input atom indices for fragment   3, e.g. 1,4,8-12,15
+ Contribution of each fragment to hole and electron:
+  1  Hole:  15.26 %     Electron:   1.56 %
+  2  Hole:  53.39 %     Electron:  11.14 %
+  3  Hole:  31.35 %     Electron:  87.30 %
+ Construction of interfragment charger-transfer matrix has finished!
+ 
+ Variation of population number of fragment  1:  -0.13706
+ Variation of population number of fragment  2:  -0.42245
+ Variation of population number of fragment  3:   0.55950
+ 
+ Intrafragment electron redistribution of fragment  1:   0.00238
+ Intrafragment electron redistribution of fragment  2:   0.05949
+ Intrafragment electron redistribution of fragment  3:   0.27367
+ 
+ Transferred electrons between fragments:
+  1 ->  2:   0.01701       1 <-  2:   0.00832     Net  1 ->  2:   0.00869
+  1 ->  3:   0.13325       1 <-  3:   0.00488     Net  1 ->  3:   0.12836
+  2 ->  3:   0.46607       2 <-  3:   0.03493     Net  2 ->  3:   0.43114
+ 
+ Intrinsic charge transfer percentage, CT(%):     66.446 %
+ Intrinsic local excitation percentage, LE(%):    33.554 %
+ 
+ If you want to redefine fragments and recalculate data, input 1
+ If you want to exit this function, input 0
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   1...
+ The sum of square of excitation coefficients:  0.499995
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499995
+ Deviation to expected normalization value (0.5) is  0.000005
+ Involved highest unoccupied orbital:   288 (HOMO+   222)
+ 
+ !!! Please cite hole-electron analysis as follows, the supplemental material presents a concise introduction of this analysis
+ Tian Lu, et al., Carbon, 165, 461-467 (2020) DOI: 10.1016/j.carbon.2020.05.023
+ 
+    ------------- Hole-electron and transition density analysis -----------
+ -1 Toggle calculating transit. magnetic dip. density in option 1, current: No
+ 0 Return
+ 1 Visualize and analyze hole, electron, transition density and so on
+ 2 Show molecular orbital contribution to hole and electron distribution
+ 3 Show atom or fragment contribution to hole and electron and plot the contributions as heat map
+ 4 Show basis function contribution to hole and electron
+ Input the printing criterion
+ e.g. 0.5 means only the MOs having contribution >=0.5% will be printed
+ MO   59, Occ:   2.00000    Hole:    0.566 %    Electron:    0.000 %
+ MO   63, Occ:   2.00000    Hole:    0.207 %    Electron:    0.000 %
+ MO   64, Occ:   2.00000    Hole:    2.529 %    Electron:    0.000 %
+ MO   66, Occ:   2.00000    Hole:   95.268 %    Electron:    0.000 %
+ MO   67, Occ:   0.00000    Hole:    0.000 %    Electron:   96.768 %
+ MO   68, Occ:   0.00000    Hole:    0.000 %    Electron:    1.078 %
+ MO   69, Occ:   0.00000    Hole:    0.000 %    Electron:    0.905 %
+ Sum of hole:   99.999 %    Sum of electron:   99.999 %
+ 
+    ------------- Hole-electron and transition density analysis -----------
+ -1 Toggle calculating transit. magnetic dip. density in option 1, current: No
+ 0 Return
+ 1 Visualize and analyze hole, electron, transition density and so on
+ 2 Show molecular orbital contribution to hole and electron distribution
+ 3 Show atom or fragment contribution to hole and electron and plot the contributions as heat map
+ 4 Show basis function contribution to hole and electron
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ 
+ "q": Exit program gracefully          "r": Load a new file
+                    ************ Main function menu ************
+ 0 Show molecular structure and view orbitals
+ 1 Output all properties at a point       2 Topology analysis
+ 3 Output and plot specific property in a line
+ 4 Output and plot specific property in a plane
+ 5 Output and plot specific property within a spatial region (calc. grid data)
+ 6 Check & modify wavefunction
+ 7 Population analysis and calculation of atomic charges
+ 8 Orbital composition analysis           9 Bond order analysis
+ 10 Plot total DOS, PDOS, OPDOS, local DOS, COHP and photoelectron spectrum
+ 11 Plot IR/Raman/UV-Vis/ECD/VCD/ROA/NMR spectrum
+ 12 Quantitative analysis of molecular surface
+ 13 Process grid data (No grid data is presented currently)
+ 14 Adaptive natural density partitioning (AdNDP) analysis
+ 15 Fuzzy atomic space analysis
+ 16 Charge decomposition analysis (CDA) and plot orbital interaction diagram
+ 17 Basin analysis                       18 Electron excitation analysis
+ 19 Orbital localization analysis        20 Visual study of weak interaction
+ 21 Energy decomposition analysis        22 Conceptual DFT (CDFT) analysis
+ 23 ETS-NOCV analysis                    24 (Hyper)polarizability analysis
+ 25 Electron delocalization and aromaticity analyses
+ 26 Structure and geometry related analyses
+ 100 Other functions (Part 1)            200 Other functions (Part 2)
+ 300 Other functions (Part 3)
+--- Completed State 1 ---
+
+--- Running Multiwfn for State 2 ---
+[DEBUG] IFCT fragments → stdin (State 2):
+  > 3
+  > 25-27
+  > 6,12-13,16-19,22-24
+  > 1-5,7-11,14-15,20-21
+[DEBUG] CTS fragments → stdin (State 2):
+  > 3
+  > 25-27
+  > 6,12-13,16-19,22-24
+  > 1-5,7-11,14-15,20-21
+ Multiwfn -- A Multifunctional Wavefunction Analyzer
+ Version 3.8(dev), update date: 2025-Feb-4
+ Developer: Tian Lu (Beijing Kein Research Center for Natural Sciences)
+ Multiwfn official website: http://sobereva.com/multiwfn
+ Multiwfn English forum: http://sobereva.com/wfnbbs
+ Multiwfn Chinese forum: http://bbs.keinsci.com/wfn
+ Both following papers ***MUST BE CITED IN MAIN TEXT*** if Multiwfn is used:
+          Tian Lu, Feiwu Chen, J. Comput. Chem., 33, 580-592 (2012)
+          Tian Lu, J. Chem. Phys., 161, 082503 (2024)
+ See "How to cite Multiwfn.pdf" in Multiwfn binary package for more information
+
+ ( Number of parallel threads:  32  Current date: 2025-08-12  Time: 16:24:22 )
+ 
+ Please wait...
+ Loading various information of the wavefunction
+ The highest angular moment basis functions is D
+ Loading basis set definition...
+ Loading orbitals...
+ Converting basis function information to GTF information...
+ Generating density matrix based on SCF orbitals...
+ Generating overlap matrix...
+ 
+ Total/Alpha/Beta electrons:    132.0000     66.0000     66.0000
+ Net charge:     0.00000      Expected multiplicity:    1
+ Atoms:     27,  Basis functions:    301,  GTFs:    564
+ Total energy:    -906.065403183211 Hartree,   Virial ratio:  2.00861347
+ This is a restricted single-determinant wavefunction
+ Orbitals from 1 to    66 are occupied
+ Title line of this file: p_nitro_biphenyl_single_nbd_aniline_derivative
+
+ Loaded SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk successfully!
+ 
+ Formula: H8 C12 N4 O3      Total atoms:      27
+ Molecule weight:       256.21738 Da
+ Point group: C1 
+ 
+ "q": Exit program gracefully          "r": Load a new file
+                    ************ Main function menu ************
+ 0 Show molecular structure and view orbitals
+ 1 Output all properties at a point       2 Topology analysis
+ 3 Output and plot specific property in a line
+ 4 Output and plot specific property in a plane
+ 5 Output and plot specific property within a spatial region (calc. grid data)
+ 6 Check & modify wavefunction
+ 7 Population analysis and calculation of atomic charges
+ 8 Orbital composition analysis           9 Bond order analysis
+ 10 Plot total DOS, PDOS, OPDOS, local DOS, COHP and photoelectron spectrum
+ 11 Plot IR/Raman/UV-Vis/ECD/VCD/ROA/NMR spectrum
+ 12 Quantitative analysis of molecular surface
+ 13 Process grid data (No grid data is presented currently)
+ 14 Adaptive natural density partitioning (AdNDP) analysis
+ 15 Fuzzy atomic space analysis
+ 16 Charge decomposition analysis (CDA) and plot orbital interaction diagram
+ 17 Basin analysis                       18 Electron excitation analysis
+ 19 Orbital localization analysis        20 Visual study of weak interaction
+ 21 Energy decomposition analysis        22 Conceptual DFT (CDFT) analysis
+ 23 ETS-NOCV analysis                    24 (Hyper)polarizability analysis
+ 25 Electron delocalization and aromaticity analyses
+ 26 Structure and geometry related analyses
+ 100 Other functions (Part 1)            200 Other functions (Part 2)
+ 300 Other functions (Part 3)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Please input path of Gaussian/ORCA output file or plain text file, electron excitation information will be loaded from this file
+ e.g. C:\lovelive\sunshine\yosoro.out
+ Hint: If pressing ENTER button directly, the file with identical name as input file but with .out or .log suffix will be loaded
+ Note: This file is recognized as a Gaussian output file
+ There are   10 excited states, loading basic information...
+ 
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   2...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   262 (HOMO+   196)
+ 
+ The highest 10 eigenvalues of NTO pairs:
+    0.995183    0.004063    0.000348    0.000138    0.000084
+    0.000040    0.000035    0.000022    0.000017    0.000016
+ Sum of all eigenvalues:  0.999945
+ 
+ 0 Return
+ 1 Output NTO orbitals to .molden file
+ 2 Output NTO orbitals to .fch file
+ 3 Output NTO orbitals to .mwfn file (recommended)
+ Input the file path to output, e.g. C:\S1.mwfn
+ Exporting .mwfn file finished!
+ Now you can load the newly generated file to visualize NTOs. Note that in this file the orbital energies correspond to NTO eigenvalues
+ 
+ Reloading SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk to recover initial status...
+ Loading finished!
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Initializing data, please wait...
+ 
+ Please input path of Gaussian/ORCA output file or plain text file, electron excitation information will be loaded from this file
+ e.g. C:\lovelive\sunshine\yosoro.out
+ Hint: If pressing ENTER button directly, the file with identical name as input file but with .out or .log suffix will be loaded
+ Note: This file is recognized as a Gaussian output file
+ There are   10 excited states, loading basic information...
+ 
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Please input index of the excited states that you want to calculate delta_r
+ e.g. 1-6,10,15-20
+ Note: If only one state is selected, the delta_r can be further decomposed as orbital pair contribution
+ Calculating, please wait...
+ 
+ Loading configuration coefficients of excited state   2...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   262 (HOMO+   196)
+ Excited state    2:   Delta_r =    4.656037 Bohr,    2.463869 Angstrom
+ 
+ If printing orbital pair contributions to delta_r? (y/n)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Calculating overlap matrix between MOs, please wait patiently...
+ Note: The default number of integration grids in general should be sufficient. If you want to change, set "iautointgrid" in settings.ini to 0, and set "radpot" and "sphpot" to proper values
+ Radial points:   15    Angular points:  170   Total:      2550 per center
+ Progress: [#-------------------------------------------------]     3.7 %     -
+ Progress: [###-----------------------------------------------]     7.4 %     \
+ Progress: [#####---------------------------------------------]    11.1 %     |
+ Progress: [#######-------------------------------------------]    14.8 %     /
+ Progress: [#########-----------------------------------------]    18.5 %     -
+ Progress: [###########---------------------------------------]    22.2 %     \
+ Progress: [############--------------------------------------]    25.9 %     |
+ Progress: [##############------------------------------------]    29.6 %     /
+ Progress: [################----------------------------------]    33.3 %     -
+ Progress: [##################--------------------------------]    37.0 %     \
+ Progress: [####################------------------------------]    40.7 %     |
+ Progress: [######################----------------------------]    44.4 %     /
+ Progress: [########################--------------------------]    48.1 %     -
+ Progress: [#########################-------------------------]    51.9 %     \
+ Progress: [###########################-----------------------]    55.6 %     |
+ Progress: [#############################---------------------]    59.3 %     /
+ Progress: [###############################-------------------]    63.0 %     -
+ Progress: [#################################-----------------]    66.7 %     \
+ Progress: [###################################---------------]    70.4 %     |
+ Progress: [#####################################-------------]    74.1 %     /
+ Progress: [######################################------------]    77.8 %     -
+ Progress: [########################################----------]    81.5 %     \
+ Progress: [##########################################--------]    85.2 %     |
+ Progress: [############################################------]    88.9 %     /
+ Progress: [##############################################----]    92.6 %     -
+ Progress: [################################################--]    96.3 %     \
+ Progress: [##################################################]   100.0 %     |
+ 
+ Preparation finished! Calculation took up time         4 s
+ 
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Please input index of the excited states that you want to calculate lambda
+ e.g. 1-6,10,15-20
+ Note: If only one state is selected, the lambda can be further decomposed as orbital pair contribution
+ Calculating, please wait...
+ 
+ Loading configuration coefficients of excited state   2...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   262 (HOMO+   196)
+ Excited state    2:   lambda =    0.428558
+ 
+ If printing orbital pair contributions to lambda? (y/n)
+ 
+ Do the lambda analysis again? (y/n)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Select the method for calculating hole and electron composition
+ 1 Mulliken-like partition (very fast, but incompatible with diffuse functions)
+ 2 Hirshfeld partition (slow, but very robust)
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   2...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   262 (HOMO+   196)
+ Evaluating atomic contributions...
+ Radial grids:   75    Angular grids:  434   Total:     32550
+ Progress: [#-------------------------------------------------]     3.7 %     /
+ Progress: [###-----------------------------------------------]     7.4 %     -
+ Progress: [#####---------------------------------------------]    11.1 %     \
+ Progress: [#######-------------------------------------------]    14.8 %     |
+ Progress: [#########-----------------------------------------]    18.5 %     /
+ Progress: [###########---------------------------------------]    22.2 %     -
+ Progress: [############--------------------------------------]    25.9 %     \
+ Progress: [##############------------------------------------]    29.6 %     |
+ Progress: [################----------------------------------]    33.3 %     /
+ Progress: [##################--------------------------------]    37.0 %     -
+ Progress: [####################------------------------------]    40.7 %     \
+ Progress: [######################----------------------------]    44.4 %     |
+ Progress: [########################--------------------------]    48.1 %     /
+ Progress: [#########################-------------------------]    51.9 %     -
+ Progress: [###########################-----------------------]    55.6 %     \
+ Progress: [#############################---------------------]    59.3 %     |
+ Progress: [###############################-------------------]    63.0 %     /
+ Progress: [#################################-----------------]    66.7 %     -
+ Progress: [###################################---------------]    70.4 %     \
+ Progress: [#####################################-------------]    74.1 %     |
+ Progress: [######################################------------]    77.8 %     /
+ Progress: [########################################----------]    81.5 %     -
+ Progress: [##########################################--------]    85.2 %     \
+ Progress: [############################################------]    88.9 %     |
+ Progress: [##############################################----]    92.6 %     /
+ Progress: [################################################--]    96.3 %     -
+ Progress: [##################################################]   100.0 %     \
+ 
+ Sum of hole: 0.9999610   Sum of electron: 0.9999773
+ Calculation took up time         4 s
+ 
+ How many fragments to be defined? e.g. 3
+ Note: If you input 0, then fragment definition will be loaded from an external file. If you input -1, then atom-atom charge transfer matrix will be exported to atmCTmat.txt in current folder
+ Input atom indices for fragment   1, e.g. 1,4,8-12,15
+ Input atom indices for fragment   2, e.g. 1,4,8-12,15
+ Input atom indices for fragment   3, e.g. 1,4,8-12,15
+ Contribution of each fragment to hole and electron:
+  1  Hole:   0.02 %     Electron:   0.41 %
+  2  Hole:   0.33 %     Electron:   3.10 %
+  3  Hole:  99.65 %     Electron:  96.49 %
+ Construction of interfragment charger-transfer matrix has finished!
+ 
+ Variation of population number of fragment  1:   0.00389
+ Variation of population number of fragment  2:   0.02765
+ Variation of population number of fragment  3:  -0.03155
+ 
+ Intrafragment electron redistribution of fragment  1:   0.00000
+ Intrafragment electron redistribution of fragment  2:   0.00010
+ Intrafragment electron redistribution of fragment  3:   0.96156
+ 
+ Transferred electrons between fragments:
+  1 ->  2:   0.00001       1 <-  2:   0.00001     Net  1 ->  2:  -0.00001
+  1 ->  3:   0.00020       1 <-  3:   0.00408     Net  1 ->  3:  -0.00389
+  2 ->  3:   0.00319       2 <-  3:   0.03085     Net  2 ->  3:  -0.02766
+ 
+ Intrinsic charge transfer percentage, CT(%):      3.834 %
+ Intrinsic local excitation percentage, LE(%):    96.166 %
+ 
+ If you want to redefine fragments and recalculate data, input 1
+ If you want to exit this function, input 0
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   2...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   262 (HOMO+   196)
+ 
+ !!! Please cite hole-electron analysis as follows, the supplemental material presents a concise introduction of this analysis
+ Tian Lu, et al., Carbon, 165, 461-467 (2020) DOI: 10.1016/j.carbon.2020.05.023
+ 
+    ------------- Hole-electron and transition density analysis -----------
+ -1 Toggle calculating transit. magnetic dip. density in option 1, current: No
+ 0 Return
+ 1 Visualize and analyze hole, electron, transition density and so on
+ 2 Show molecular orbital contribution to hole and electron distribution
+ 3 Show atom or fragment contribution to hole and electron and plot the contributions as heat map
+ 4 Show basis function contribution to hole and electron
+ Input the printing criterion
+ e.g. 0.5 means only the MOs having contribution >=0.5% will be printed
+ MO   57, Occ:   2.00000    Hole:    0.618 %    Electron:    0.000 %
+ MO   58, Occ:   2.00000    Hole:    2.830 %    Electron:    0.000 %
+ MO   60, Occ:   2.00000    Hole:    1.443 %    Electron:    0.000 %
+ MO   62, Occ:   2.00000    Hole:   93.931 %    Electron:    0.000 %
+ MO   63, Occ:   2.00000    Hole:    0.488 %    Electron:    0.000 %
+ MO   67, Occ:   0.00000    Hole:    0.000 %    Electron:   63.228 %
+ MO   68, Occ:   0.00000    Hole:    0.000 %    Electron:   31.983 %
+ MO   69, Occ:   0.00000    Hole:    0.000 %    Electron:    2.330 %
+ MO   70, Occ:   0.00000    Hole:    0.000 %    Electron:    0.468 %
+ MO   71, Occ:   0.00000    Hole:    0.000 %    Electron:    0.764 %
+ MO   72, Occ:   0.00000    Hole:    0.000 %    Electron:    1.067 %
+ Sum of hole:   99.997 %    Sum of electron:   99.997 %
+ 
+    ------------- Hole-electron and transition density analysis -----------
+ -1 Toggle calculating transit. magnetic dip. density in option 1, current: No
+ 0 Return
+ 1 Visualize and analyze hole, electron, transition density and so on
+ 2 Show molecular orbital contribution to hole and electron distribution
+ 3 Show atom or fragment contribution to hole and electron and plot the contributions as heat map
+ 4 Show basis function contribution to hole and electron
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ 
+ "q": Exit program gracefully          "r": Load a new file
+                    ************ Main function menu ************
+ 0 Show molecular structure and view orbitals
+ 1 Output all properties at a point       2 Topology analysis
+ 3 Output and plot specific property in a line
+ 4 Output and plot specific property in a plane
+ 5 Output and plot specific property within a spatial region (calc. grid data)
+ 6 Check & modify wavefunction
+ 7 Population analysis and calculation of atomic charges
+ 8 Orbital composition analysis           9 Bond order analysis
+ 10 Plot total DOS, PDOS, OPDOS, local DOS, COHP and photoelectron spectrum
+ 11 Plot IR/Raman/UV-Vis/ECD/VCD/ROA/NMR spectrum
+ 12 Quantitative analysis of molecular surface
+ 13 Process grid data (No grid data is presented currently)
+ 14 Adaptive natural density partitioning (AdNDP) analysis
+ 15 Fuzzy atomic space analysis
+ 16 Charge decomposition analysis (CDA) and plot orbital interaction diagram
+ 17 Basin analysis                       18 Electron excitation analysis
+ 19 Orbital localization analysis        20 Visual study of weak interaction
+ 21 Energy decomposition analysis        22 Conceptual DFT (CDFT) analysis
+ 23 ETS-NOCV analysis                    24 (Hyper)polarizability analysis
+ 25 Electron delocalization and aromaticity analyses
+ 26 Structure and geometry related analyses
+ 100 Other functions (Part 1)            200 Other functions (Part 2)
+ 300 Other functions (Part 3)
+--- Completed State 2 ---
+
+--- Running Multiwfn for State 3 ---
+[DEBUG] IFCT fragments → stdin (State 3):
+  > 3
+  > 25-27
+  > 6,12-13,16-19,22-24
+  > 1-5,7-11,14-15,20-21
+[DEBUG] CTS fragments → stdin (State 3):
+  > 3
+  > 25-27
+  > 6,12-13,16-19,22-24
+  > 1-5,7-11,14-15,20-21
+ Multiwfn -- A Multifunctional Wavefunction Analyzer
+ Version 3.8(dev), update date: 2025-Feb-4
+ Developer: Tian Lu (Beijing Kein Research Center for Natural Sciences)
+ Multiwfn official website: http://sobereva.com/multiwfn
+ Multiwfn English forum: http://sobereva.com/wfnbbs
+ Multiwfn Chinese forum: http://bbs.keinsci.com/wfn
+ Both following papers ***MUST BE CITED IN MAIN TEXT*** if Multiwfn is used:
+          Tian Lu, Feiwu Chen, J. Comput. Chem., 33, 580-592 (2012)
+          Tian Lu, J. Chem. Phys., 161, 082503 (2024)
+ See "How to cite Multiwfn.pdf" in Multiwfn binary package for more information
+
+ ( Number of parallel threads:  32  Current date: 2025-08-12  Time: 16:24:30 )
+ 
+ Please wait...
+ Loading various information of the wavefunction
+ The highest angular moment basis functions is D
+ Loading basis set definition...
+ Loading orbitals...
+ Converting basis function information to GTF information...
+ Generating density matrix based on SCF orbitals...
+ Generating overlap matrix...
+ 
+ Total/Alpha/Beta electrons:    132.0000     66.0000     66.0000
+ Net charge:     0.00000      Expected multiplicity:    1
+ Atoms:     27,  Basis functions:    301,  GTFs:    564
+ Total energy:    -906.065403183211 Hartree,   Virial ratio:  2.00861347
+ This is a restricted single-determinant wavefunction
+ Orbitals from 1 to    66 are occupied
+ Title line of this file: p_nitro_biphenyl_single_nbd_aniline_derivative
+
+ Loaded SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk successfully!
+ 
+ Formula: H8 C12 N4 O3      Total atoms:      27
+ Molecule weight:       256.21738 Da
+ Point group: C1 
+ 
+ "q": Exit program gracefully          "r": Load a new file
+                    ************ Main function menu ************
+ 0 Show molecular structure and view orbitals
+ 1 Output all properties at a point       2 Topology analysis
+ 3 Output and plot specific property in a line
+ 4 Output and plot specific property in a plane
+ 5 Output and plot specific property within a spatial region (calc. grid data)
+ 6 Check & modify wavefunction
+ 7 Population analysis and calculation of atomic charges
+ 8 Orbital composition analysis           9 Bond order analysis
+ 10 Plot total DOS, PDOS, OPDOS, local DOS, COHP and photoelectron spectrum
+ 11 Plot IR/Raman/UV-Vis/ECD/VCD/ROA/NMR spectrum
+ 12 Quantitative analysis of molecular surface
+ 13 Process grid data (No grid data is presented currently)
+ 14 Adaptive natural density partitioning (AdNDP) analysis
+ 15 Fuzzy atomic space analysis
+ 16 Charge decomposition analysis (CDA) and plot orbital interaction diagram
+ 17 Basin analysis                       18 Electron excitation analysis
+ 19 Orbital localization analysis        20 Visual study of weak interaction
+ 21 Energy decomposition analysis        22 Conceptual DFT (CDFT) analysis
+ 23 ETS-NOCV analysis                    24 (Hyper)polarizability analysis
+ 25 Electron delocalization and aromaticity analyses
+ 26 Structure and geometry related analyses
+ 100 Other functions (Part 1)            200 Other functions (Part 2)
+ 300 Other functions (Part 3)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Please input path of Gaussian/ORCA output file or plain text file, electron excitation information will be loaded from this file
+ e.g. C:\lovelive\sunshine\yosoro.out
+ Hint: If pressing ENTER button directly, the file with identical name as input file but with .out or .log suffix will be loaded
+ Note: This file is recognized as a Gaussian output file
+ There are   10 excited states, loading basic information...
+ 
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   3...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   277 (HOMO+   211)
+ 
+ The highest 10 eigenvalues of NTO pairs:
+    0.910360    0.076899    0.009383    0.001130    0.000417
+    0.000282    0.000273    0.000239    0.000169    0.000129
+ Sum of all eigenvalues:  0.999282
+ 
+ 0 Return
+ 1 Output NTO orbitals to .molden file
+ 2 Output NTO orbitals to .fch file
+ 3 Output NTO orbitals to .mwfn file (recommended)
+ Input the file path to output, e.g. C:\S1.mwfn
+ Exporting .mwfn file finished!
+ Now you can load the newly generated file to visualize NTOs. Note that in this file the orbital energies correspond to NTO eigenvalues
+ 
+ Reloading SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.fchk to recover initial status...
+ Loading finished!
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Initializing data, please wait...
+ 
+ Please input path of Gaussian/ORCA output file or plain text file, electron excitation information will be loaded from this file
+ e.g. C:\lovelive\sunshine\yosoro.out
+ Hint: If pressing ENTER button directly, the file with identical name as input file but with .out or .log suffix will be loaded
+ Note: This file is recognized as a Gaussian output file
+ There are   10 excited states, loading basic information...
+ 
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Please input index of the excited states that you want to calculate delta_r
+ e.g. 1-6,10,15-20
+ Note: If only one state is selected, the delta_r can be further decomposed as orbital pair contribution
+ Calculating, please wait...
+ 
+ Loading configuration coefficients of excited state   3...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   277 (HOMO+   211)
+ Excited state    3:   Delta_r =    7.878227 Bohr,    4.168978 Angstrom
+ 
+ If printing orbital pair contributions to delta_r? (y/n)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Calculating overlap matrix between MOs, please wait patiently...
+ Note: The default number of integration grids in general should be sufficient. If you want to change, set "iautointgrid" in settings.ini to 0, and set "radpot" and "sphpot" to proper values
+ Radial points:   15    Angular points:  170   Total:      2550 per center
+ Progress: [#-------------------------------------------------]     3.7 %     -
+ Progress: [###-----------------------------------------------]     7.4 %     \
+ Progress: [#####---------------------------------------------]    11.1 %     |
+ Progress: [#######-------------------------------------------]    14.8 %     /
+ Progress: [#########-----------------------------------------]    18.5 %     -
+ Progress: [###########---------------------------------------]    22.2 %     \
+ Progress: [############--------------------------------------]    25.9 %     |
+ Progress: [##############------------------------------------]    29.6 %     /
+ Progress: [################----------------------------------]    33.3 %     -
+ Progress: [##################--------------------------------]    37.0 %     \
+ Progress: [####################------------------------------]    40.7 %     |
+ Progress: [######################----------------------------]    44.4 %     /
+ Progress: [########################--------------------------]    48.1 %     -
+ Progress: [#########################-------------------------]    51.9 %     \
+ Progress: [###########################-----------------------]    55.6 %     |
+ Progress: [#############################---------------------]    59.3 %     /
+ Progress: [###############################-------------------]    63.0 %     -
+ Progress: [#################################-----------------]    66.7 %     \
+ Progress: [###################################---------------]    70.4 %     |
+ Progress: [#####################################-------------]    74.1 %     /
+ Progress: [######################################------------]    77.8 %     -
+ Progress: [########################################----------]    81.5 %     \
+ Progress: [##########################################--------]    85.2 %     |
+ Progress: [############################################------]    88.9 %     /
+ Progress: [##############################################----]    92.6 %     -
+ Progress: [################################################--]    96.3 %     \
+ Progress: [##################################################]   100.0 %     |
+ 
+ Preparation finished! Calculation took up time         4 s
+ 
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Please input index of the excited states that you want to calculate lambda
+ e.g. 1-6,10,15-20
+ Note: If only one state is selected, the lambda can be further decomposed as orbital pair contribution
+ Calculating, please wait...
+ 
+ Loading configuration coefficients of excited state   3...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   277 (HOMO+   211)
+ Excited state    3:   lambda =    0.319677
+ 
+ If printing orbital pair contributions to lambda? (y/n)
+ 
+ Do the lambda analysis again? (y/n)
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Select the method for calculating hole and electron composition
+ 1 Mulliken-like partition (very fast, but incompatible with diffuse functions)
+ 2 Hirshfeld partition (slow, but very robust)
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   3...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   277 (HOMO+   211)
+ Evaluating atomic contributions...
+ Radial grids:   75    Angular grids:  434   Total:     32550
+ Progress: [#-------------------------------------------------]     3.7 %     /
+ Progress: [###-----------------------------------------------]     7.4 %     -
+ Progress: [#####---------------------------------------------]    11.1 %     \
+ Progress: [#######-------------------------------------------]    14.8 %     |
+ Progress: [#########-----------------------------------------]    18.5 %     /
+ Progress: [###########---------------------------------------]    22.2 %     -
+ Progress: [############--------------------------------------]    25.9 %     \
+ Progress: [##############------------------------------------]    29.6 %     |
+ Progress: [################----------------------------------]    33.3 %     /
+ Progress: [##################--------------------------------]    37.0 %     -
+ Progress: [####################------------------------------]    40.7 %     \
+ Progress: [######################----------------------------]    44.4 %     |
+ Progress: [########################--------------------------]    48.1 %     /
+ Progress: [#########################-------------------------]    51.9 %     -
+ Progress: [###########################-----------------------]    55.6 %     \
+ Progress: [#############################---------------------]    59.3 %     |
+ Progress: [###############################-------------------]    63.0 %     /
+ Progress: [#################################-----------------]    66.7 %     -
+ Progress: [###################################---------------]    70.4 %     \
+ Progress: [#####################################-------------]    74.1 %     |
+ Progress: [######################################------------]    77.8 %     /
+ Progress: [########################################----------]    81.5 %     -
+ Progress: [##########################################--------]    85.2 %     \
+ Progress: [############################################------]    88.9 %     |
+ Progress: [##############################################----]    92.6 %     /
+ Progress: [################################################--]    96.3 %     -
+ Progress: [##################################################]   100.0 %     \
+ 
+ Sum of hole: 0.9999974   Sum of electron: 0.9999846
+ Calculation took up time         5 s
+ 
+ How many fragments to be defined? e.g. 3
+ Note: If you input 0, then fragment definition will be loaded from an external file. If you input -1, then atom-atom charge transfer matrix will be exported to atmCTmat.txt in current folder
+ Input atom indices for fragment   1, e.g. 1,4,8-12,15
+ Input atom indices for fragment   2, e.g. 1,4,8-12,15
+ Input atom indices for fragment   3, e.g. 1,4,8-12,15
+ Contribution of each fragment to hole and electron:
+  1  Hole:   1.54 %     Electron:   2.40 %
+  2  Hole:  93.10 %     Electron:  21.57 %
+  3  Hole:   5.36 %     Electron:  76.03 %
+ Construction of interfragment charger-transfer matrix has finished!
+ 
+ Variation of population number of fragment  1:   0.00859
+ Variation of population number of fragment  2:  -0.71523
+ Variation of population number of fragment  3:   0.70664
+ 
+ Intrafragment electron redistribution of fragment  1:   0.00037
+ Intrafragment electron redistribution of fragment  2:   0.20084
+ Intrafragment electron redistribution of fragment  3:   0.04077
+ 
+ Transferred electrons between fragments:
+  1 ->  2:   0.00332       1 <-  2:   0.02235     Net  1 ->  2:  -0.01902
+  1 ->  3:   0.01171       1 <-  3:   0.00129     Net  1 ->  3:   0.01043
+  2 ->  3:   0.70778       2 <-  3:   0.01157     Net  2 ->  3:   0.69621
+ 
+ Intrinsic charge transfer percentage, CT(%):     75.802 %
+ Intrinsic local excitation percentage, LE(%):    24.198 %
+ 
+ If you want to redefine fragments and recalculate data, input 1
+ If you want to exit this function, input 0
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ Note: Basic information of all excited states have been previously loaded from SP_ExSt_TDA_p_nitro_biphenyl_single_nbd_aniline_derivative.log
+ Summary of excited states:
+ State:    1    Exc. Energy:   2.957 eV   Multi.: 1    MO pairs:    4846
+ State:    2    Exc. Energy:   3.956 eV   Multi.: 1    MO pairs:    1693
+ State:    3    Exc. Energy:   4.410 eV   Multi.: 1    MO pairs:    3678
+ State:    4    Exc. Energy:   4.521 eV   Multi.: 1    MO pairs:    5360
+ State:    5    Exc. Energy:   4.525 eV   Multi.: 1    MO pairs:    4836
+ State:    6    Exc. Energy:   4.671 eV   Multi.: 1    MO pairs:    4553
+ State:    7    Exc. Energy:   5.137 eV   Multi.: 1    MO pairs:    5354
+ State:    8    Exc. Energy:   5.208 eV   Multi.: 1    MO pairs:    4995
+ State:    9    Exc. Energy:   5.320 eV   Multi.: 1    MO pairs:    4358
+ State:   10    Exc. Energy:   5.609 eV   Multi.: 1    MO pairs:    5657
+ 
+ Perform the analysis for which excited state? e.g. 2
+ Loading configuration coefficients of excited state   3...
+ The sum of square of excitation coefficients:  0.499986
+ The negative of the sum of square of de-excitation coefficients:  0.000000
+ The sum of above two values  0.499986
+ Deviation to expected normalization value (0.5) is  0.000014
+ Involved highest unoccupied orbital:   277 (HOMO+   211)
+ 
+ !!! Please cite hole-electron analysis as follows, the supplemental material presents a concise introduction of this analysis
+ Tian Lu, et al., Carbon, 165, 461-467 (2020) DOI: 10.1016/j.carbon.2020.05.023
+ 
+    ------------- Hole-electron and transition density analysis -----------
+ -1 Toggle calculating transit. magnetic dip. density in option 1, current: No
+ 0 Return
+ 1 Visualize and analyze hole, electron, transition density and so on
+ 2 Show molecular orbital contribution to hole and electron distribution
+ 3 Show atom or fragment contribution to hole and electron and plot the contributions as heat map
+ 4 Show basis function contribution to hole and electron
+ Input the printing criterion
+ e.g. 0.5 means only the MOs having contribution >=0.5% will be printed
+ MO   59, Occ:   2.00000    Hole:    0.284 %    Electron:    0.000 %
+ MO   60, Occ:   2.00000    Hole:    1.468 %    Electron:    0.000 %
+ MO   65, Occ:   2.00000    Hole:   89.943 %    Electron:    0.000 %
+ MO   66, Occ:   2.00000    Hole:    7.353 %    Electron:    0.000 %
+ MO   67, Occ:   0.00000    Hole:    0.000 %    Electron:   87.019 %
+ MO   68, Occ:   0.00000    Hole:    0.000 %    Electron:    2.122 %
+ MO   69, Occ:   0.00000    Hole:    0.000 %    Electron:    3.412 %
+ MO   70, Occ:   0.00000    Hole:    0.000 %    Electron:    6.790 %
+ MO   71, Occ:   0.00000    Hole:    0.000 %    Electron:    0.325 %
+ Sum of hole:   99.997 %    Sum of electron:   99.997 %
+ 
+    ------------- Hole-electron and transition density analysis -----------
+ -1 Toggle calculating transit. magnetic dip. density in option 1, current: No
+ 0 Return
+ 1 Visualize and analyze hole, electron, transition density and so on
+ 2 Show molecular orbital contribution to hole and electron distribution
+ 3 Show atom or fragment contribution to hole and electron and plot the contributions as heat map
+ 4 Show basis function contribution to hole and electron
+ 
+            ============ Electronic excitation analyses ============ 
+ -1 Check, modify and export configuration coefficients of an excitation
+ 0 Return
+ 1 Analyze and visualize hole&electron distribution, transition density, and transition electric/magnetic dipole moment density
+ 2 Plot atom/fragment transition matrix of various kinds as heat map
+ 3 Analyze charge-transfer based on density difference grid data (JCTC,7,2498)
+ 4 Calculate delta_r index to measure charge-transfer length (JCTC,9,3118)
+ 5 Calculate transition electric/magnetic dipole moments between all states and for each state
+ 6 Generate natural transition orbitals (NTOs)
+ 7 Calculate ghost-hunter index (JCC,38,2151)
+ 8 Calculate interfragment charge transfer via IFCT method
+ 9 Generate and export transition density matrix
+ 10 Decompose transition electric/magnetic dipole moment as molecular orbital pair contributions
+ 11 Decompose transition electric/magnetic dipole moment as basis function and atom contributions
+ 12 Calculate Mulliken atomic transition charges
+ 13 Generate natural orbitals of specific excited states
+ 14 Calculate lambda index to characterize electron excitation (JCP,128,044118)
+ 15 Print major MO transitions in all excited states
+ 16 Charge-transfer spectrum (CTS) analysis (Carbon,187,78)
+ 
+ "q": Exit program gracefully          "r": Load a new file
+                    ************ Main function menu ************
+ 0 Show molecular structure and view orbitals
+ 1 Output all properties at a point       2 Topology analysis
+ 3 Output and plot specific property in a line
+ 4 Output and plot specific property in a plane
+ 5 Output and plot specific property within a spatial region (calc. grid data)
+ 6 Check & modify wavefunction
+ 7 Population analysis and calculation of atomic charges
+ 8 Orbital composition analysis           9 Bond order analysis
+ 10 Plot total DOS, PDOS, OPDOS, local DOS, COHP and photoelectron spectrum
+ 11 Plot IR/Raman/UV-Vis/ECD/VCD/ROA/NMR spectrum
+ 12 Quantitative analysis of molecular surface
+ 13 Process grid data (No grid data is presented currently)
+ 14 Adaptive natural density partitioning (AdNDP) analysis
+ 15 Fuzzy atomic space analysis
+ 16 Charge decomposition analysis (CDA) and plot orbital interaction diagram
+ 17 Basin analysis                       18 Electron excitation analysis
+ 19 Orbital localization analysis        20 Visual study of weak interaction
+ 21 Energy decomposition analysis        22 Conceptual DFT (CDFT) analysis
+ 23 ETS-NOCV analysis                    24 (Hyper)polarizability analysis
+ 25 Electron delocalization and aromaticity analyses
+ 26 Structure and geometry related analyses
+ 100 Other functions (Part 1)            200 Other functions (Part 2)
+ 300 Other functions (Part 3)
+--- Completed State 3 ---
+
+=== All tasks completed @ Tue Aug 12 16:24:40 MDT 2025 ===
