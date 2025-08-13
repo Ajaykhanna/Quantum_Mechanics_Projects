@@ -105,18 +105,7 @@ Fragment_3: 1-5,7-11,14-15,20-21
 
 * **NTO:** `18, 6, ${log}, ${state}, 3, S${state}.mwfn, 0, q`
 * **Δr:** `18, 4, ${log}, ${state}, n, 0, q`
-* **λ (updated):**
-
-  ```
-  18
-  14
-  ${log}
-  ${state}
-  n
-  n
-  0
-  q
-  ```
+* **λ:** `18, 14, ${log}, ${state}, n, n, 0, q`
 
 * **IFCT:** `18, 8, 2, ${log}, ${state}, ${IFCT_FRAG_BLOCK}, 0, 0, q`
 * **CTS:** `18, 16, ${IFCT_FRAG_BLOCK}, ${log}, 2, 0, q`
@@ -303,5 +292,10 @@ PRs welcome! Please:
 # Parse only CTS and write an .md report next to the log
 python parse_multiwfn_log.py /runs/MultiWfn_Excited_States_Analysis_20250813_144935.log --cts --ext md
 ```
+
+## 🙏 Acknowledgments
+
+Thanks to the authors/maintainers of **Multiwfn** and the Gaussian ecosystem. This toolkit simply orchestrates and organizes their outputs into a streamlined, reproducible workflow.
+
 
 Happy computing! 🧫⚡️
