@@ -349,16 +349,14 @@ EOF
   fi
 }
 
-run_cts_for_state() {
-  local fchk="$1" log="$2" state="$3"
-  echo "[CTS] State $state"
+run_cts() {
+  local fchk="$1" log="$2"
+  echo "[CTS] Running once for all excited states present in: $log"
 
-  # Show exactly what we feed (debug)
-  echo "[DEBUG] CTS fragments → stdin (State $state):"
+  echo "[DEBUG] CTS fragments → stdin:"
   printf '%s\n' "$IFCT_FRAG_BLOCK" | sed 's/^/  > /'
 
-  # Exact flow provided: 18, 16, ${IFCT_FRAG_BLOCK}, ${log}, 2, 0, q
-  if ! "$MULTIWFN_BIN" "$fchk" <<EOF
+  "$MULTIWFN_BIN" "$fchk" <<EOF
 18
 16
 ${IFCT_FRAG_BLOCK}
@@ -367,10 +365,6 @@ ${log}
 0
 q
 EOF
-  then
-    echo "WARN: CTS failed for state $state"
-    return 1
-  fi
 }
 
 run_mo_for_state() {
@@ -401,14 +395,20 @@ for state in "${STATE_LIST[@]}"; do
   $RUN_NTO     && run_nto_for_state    "$INPUT_FCHK" "$INPUT_LOG" "$state" || true
   $RUN_DELTAR  && run_deltaR_for_state "$INPUT_FCHK" "$INPUT_LOG" "$state" || true
   $RUN_IFCT    && run_ifct_for_state   "$INPUT_FCHK" "$INPUT_LOG" "$state" || true
-  $RUN_CTS     && run_cts_for_state    "$INPUT_FCHK" "$INPUT_LOG" "$state" || true
   $RUN_MO      && run_mo_for_state     "$INPUT_FCHK" "$INPUT_LOG" "$state" || true
 
   echo "--- Completed (non-lambda) for State $state ---"
   echo
 done
 
-# 2) If lambda was requested:
+# 2) Run CTS ONCE (Multiwfn internally iterates over all states in the .log)
+if $RUN_CTS; then
+  echo ">>> Running CTS once (Multiwfn processes all excited states found in ${INPUT_LOG})..."
+  # You can pass any placeholder state; the function won’t use it.
+  run_cts "$INPUT_FCHK" "$INPUT_LOG" || true
+fi
+
+# 3) If lambda was requested:
 #    - If --full: run lambda AFTER all other analyses finish (globally last)
 #    - If only --lambda (or selective incl. lambda), we still run it here
 if $RUN_LAMBDA; then
@@ -423,4 +423,5 @@ if $RUN_LAMBDA; then
 fi
 
 echo "=== All requested analyses completed @ $(date) ==="
+
 
