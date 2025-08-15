@@ -198,6 +198,19 @@ Below are **two ways** to visualize how this script works:
 ---
 
 ### 📊 Mermaid Flowchart (renders on GitHub)
+Perfect — here’s the **integrated `README.md`** section where both the ASCII diagram and the Mermaid diagram are included.
+This way, anyone viewing offline (or in an environment without Mermaid rendering) still sees the ASCII diagram, but GitHub users get the nice flowchart too.
+
+---
+
+````markdown
+## 🖼 Process Overview
+
+Below are **two ways** to visualize how this script works:
+
+---
+
+### 📊 Mermaid Flowchart (renders on GitHub)
 
 ```mermaid
 flowchart LR
@@ -223,7 +236,13 @@ flowchart LR
     P2 --> E
     P3 --> E
     P4 --> E
-```
+````
+
+---
+
+### 🖥 ASCII Diagram (works everywhere)
+
+```text
                                 🌀 Multiwfn Batch Orbital CUBE Generator
 
 Inputs                                Orchestration                         Processing                          Outputs
@@ -281,3 +300,16 @@ Filename scheme
 
   Final name:  S<state>_orbs<start6>_<end3>.cub
                S3_orbs000584_589.cub
+```
+
+---
+
+💡 **Tip:** If your Markdown viewer supports Mermaid, you’ll see a colorful flowchart.
+If not, the ASCII diagram ensures everyone can still follow the process.
+
+```
+
+---
+
+Do you want me to now go through your **whole README** and weave these diagrams directly into the right section so that it’s a fully polished, ready-to-publish GitHub doc? That way the diagrams fit naturally with the "How it works" section rather than being standalone at the bottom.
+```
