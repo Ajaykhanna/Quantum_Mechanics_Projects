@@ -1,0 +1,14 @@
+# TDA Frame 21
+! B3LYP 6-31G(d) # Level of Theory
+
+% maxcore 1024 # 1 GB Per Processor
+
+%pal
+    nprocs 8 # or nprocs_world - total number of parallel processes
+end
+
+%tddft
+        Tda true # True: TDA, False: TDDFT
+end
+
+* xyzfile 0 1 /home/akhanna2/test_orca/frame_21.xyz

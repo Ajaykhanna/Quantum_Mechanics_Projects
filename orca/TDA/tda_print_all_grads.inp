@@ -1,0 +1,24 @@
+# TDA Frame 21
+! B3LYP 6-31G(d) # Level of Theory
+! engrad # Requests Energy gradient calculation
+
+% maxcore 1024 # 1 GB Per Processor 16*8.5 GB >= 136GB required to run the calculations
+
+%pal
+    nprocs 8 # or nprocs_world - total number of parallel processes
+end
+
+%tddft
+        Tda true # # True: TDA, False: TDDFT
+        nroots 5 # Setting the number of roots (transitions) to be calculated.
+        IROOT  1 # The root to be optimized
+        maxdim 10 # Davidson expansion space = MaxDim * NRoots
+        SGRADLIST 0,1,2,3,4,5 # Required to save this gradients in a text file
+end
+
+%method
+        STORECISGRAD TRUE
+end
+
+* xyzfile 0 1 /vast/home/akhanna2/data/unm_project/test_orca/frame_21.xyz
+
