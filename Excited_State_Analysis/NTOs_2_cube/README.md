@@ -1,9 +1,9 @@
-
 # 🌀 Multiwfn Batch Orbital CUBE Generator
 
 🚀 **Automate Multiwfn orbital wavefunction CUBE file generation** for multiple excited states in a single command — no more overwriting `orbital.cub` and no tedious manual inputs!  
 
 This script:
+
 - Runs Multiwfn in **fully non-interactive mode** using your exact menu sequence.
 - Renames the generated `orbital.cub` for each state so they never overwrite each other.
 - Supports **state ranges** (`1-4`) and **lists** (`1 3 5-7`).
@@ -14,15 +14,10 @@ This script:
 ## 📜 Features
 
 ✨ **What this script does:**
+
 - 🔢 Loops over any number of states.
 - 📂 Creates organized output directories (`cube_out/` for `.cub` files, `logs/` for run logs).
 - 🛡 Prevents file overwrites by renaming each output to:
-
-```
-
-S<state>*orbs\<start\_padded6>*\<end\_padded3>.cub
-
-````
 
 Example:  
 `S3_orbs000585_589.cub` → State 3, orbitals 585–589.
@@ -37,8 +32,8 @@ Example:
 Clone this repository:
 
 ```bash
-git clone https://github.com/yourusername/multiwfn-cube-generator.git
-cd multiwfn-cube-generator
+git clone https://github.com/Ajaykhanna/Quantum_Mechanics_Projects.git
+cd Quantum_Mechanics_Projects/Excited_State_Analysis/NTOs_2_cube
 ````
 
 Make the script executable:
@@ -55,6 +50,16 @@ Ensure **Multiwfn** is installed and available in your `PATH`, or set the path v
 
 You can control behavior via **environment variables**:
 
+```bash
+export MULTIWFN_BIN="/path/to/multiwfn" # Path to Multiwfn executable
+export STATE_PREFIX="S" # Prefix for input files (e.g., "S" for S1.mfwn)
+export INPUT_EXT=".mfwn" # Extension of Multiwfn input files
+export ORBITAL_RANGE="584-589" # Orbital range to process (e.g., "584-589" or "600-605")
+export OUTDIR="cube_out" # Directory for output .cub files
+export LOGDIR="logs" # Directory for logs
+export JOBS=4 # Number of parallel jobs (default: 1)
+export DRY_RUN=1 # Set to 1 to preview without running
+```
 | Variable        | Default    | Description                                 |
 | --------------- | ---------- | ------------------------------------------- |
 | `MULTIWFN_BIN`  | `multiwfn` | Path to Multiwfn executable                 |
@@ -125,7 +130,7 @@ DRY_RUN=1 ./generate_orbital_cubes.sh 1
 2. **Expands ranges** (e.g., `1-3` → `1 2 3`).
 3. For each state:
 
-   * Builds the **exact Multiwfn input sequence**:
+   - Builds the **exact Multiwfn input sequence**:
 
      ```
      200
@@ -136,15 +141,16 @@ DRY_RUN=1 ./generate_orbital_cubes.sh 1
      0
      q
      ```
-   * Runs Multiwfn on `S<state>.mfwn`.
-   * Renames `orbital.cub` → `S<state>_orbs<start6>_<end3>.cub`.
-   * Saves logs in `logs/state_<state>.log`.
+
+   - Runs Multiwfn on `S<state>.mfwn`.
+   - Renames `orbital.cub` → `S<state>_orbs<start6>_<end3>.cub`.
+   - Saves logs in `logs/state_<state>.log`.
 
 ---
 
 ## 📁 Example Directory Layout
 
-```
+```tree
 cube_out/
 ├── S1_orbs000584_589.cub
 ├── S2_orbs000584_589.cub
@@ -168,15 +174,15 @@ generate_orbital_cubes.sh
 
 ## 💡 Tips & Notes
 
-* If `ORBITAL_RANGE` contains multiple comma-separated values, the filename uses the **minimum and maximum** numbers found.
-* Always remove or move old `orbital.cub` files before running manually — the script already does this automatically.
-* If Multiwfn fails, check the log file for that state in `logs/`.
+- If `ORBITAL_RANGE` contains multiple comma-separated values, the filename uses the **minimum and maximum** numbers found.
+- Always remove or move old `orbital.cub` files before running manually — the script already does this automatically.
+- If Multiwfn fails, check the log file for that state in `logs/`.
 
 ---
 
 ## 🏆 License
 
-This script is released under the [MIT License](LICENSE).
+[MIT License](https://opensource.org/license/mit).
 
 ---
 
@@ -191,125 +197,8 @@ $ ./generate_orbital_cubes.sh 1 3
 Done. Renamed CUBE files are in: cube_out/
 ```
 
-## 🖼 Process Overview
+## 🙏 Acknowledgments
 
-Below are **two ways** to visualize how this script works:
+Thanks to the authors/maintainers of **Multiwfn**. This toolkit simply orchestrates and organizes their outputs into a streamlined, reproducible workflow.
 
----
-
-### 📊 Mermaid Flowchart (renders on GitHub)
-Perfect — here’s the **integrated `README.md`** section where both the ASCII diagram and the Mermaid diagram are included.
-This way, anyone viewing offline (or in an environment without Mermaid rendering) still sees the ASCII diagram, but GitHub users get the nice flowchart too.
-
----
-
-````markdown
-## 🖼 Process Overview
-
-Below are **two ways** to visualize how this script works:
-
----
-
-### 📊 Mermaid Flowchart (renders on GitHub)
-
-```mermaid
-flowchart LR
-    A[📂 Input: S*.mfwn] --> B{📝 State list/range}
-    B --> C[🔄 Expand ranges]
-    C --> D[🛠 Build Multiwfn menu payload]
-    D --> E[⚙️ Run Multiwfn\n200 → 3 → <ORBITAL_RANGE> → 3 → 2 → 0 → q]
-    E --> F[📄 orbital.cub]
-    F --> G[✏️ Rename file\nS<state>_orbs<start6>_<end3>.cub]
-    G --> H[📂 cube_out/]
-    E --> L[🗒 logs/state_<state>.log]
-
-    %% Parallel processing branch
-    subgraph P[⚡ Parallel Execution (JOBS > 1)]
-        direction LR
-        P1[Worker #1: state 1]
-        P2[Worker #2: state 2]
-        P3[Worker #3: state 3]
-        P4[Worker #4: state 4]
-    end
-    C --> P
-    P1 --> E
-    P2 --> E
-    P3 --> E
-    P4 --> E
-````
-
----
-
-### 🖥 ASCII Diagram (works everywhere)
-
-```text
-                                🌀 Multiwfn Batch Orbital CUBE Generator
-
-Inputs                                Orchestration                         Processing                          Outputs
-======                                =============                         ==========                          =======
-                                                                                                                 
-  S1.mfwn                                                                                                         cube_out/
-  S2.mfwn            +------------------------------+                        +-----------------------+            ├─ S1_orbs000584_589.cub
-  S3.mfwn   ───────▶ | generate_orbital_cubes.sh    |   for each state s ──▶ | Multiwfn (non-interactive) | ─┐    ├─ S2_orbs000584_589.cub
-  S4.mfwn            |   • expands ranges           |                        |  using exact menu input:   |  │    └─ S3_orbs000584_589.cub
-                     |   • builds menu payload      |                        |                             |  │
-State list/range     |   • runs sequential/parallel |                        |   200                       |  │    logs/
-( e.g., "1 3 5-7" )  +------------------------------+                        |   3                         |  │    ├─ state_1.log
-                                                                            |   <ORBITAL_RANGE>           |  │    ├─ state_2.log
-                                                                            |   3                         |  │    ├─ state_3.log
-                                                                            |   2                         |  │    └─ state_4.log
-                                                                            |   0                         |  │
-                                                                            |   q                         |  │
-                                                                            +-----------------------------+  │
-                                                                                                              │
-                                                                                                              ▼
-                                                                                                    Generated file:
-                                                                                                         ./orbital.cub
-                                                                                                              │
-                                                                                                              │  rename + move
-                                                                                                              ▼
-                                                                                                   +--------------------------+
-                                                                                                   |  "${OUTDIR}/S${s}_orbs  |
-                                                                                                   |   ${start6}_${end3}.cub"|
-                                                                                                   +--------------------------+
-
-
-Parallel mode (JOBS > 1)
-========================
-
-          states: 1      2      3      4            (queued)
-                  │      │      │      │
-                  ├──────┼──────┼──────┤
-                  ▼      ▼      ▼      ▼
-              ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐
-              │ Worker #1  │ │ Worker #2  │ │ Worker #3  │ │ Worker #4  │
-              │ runs s=1   │ │ runs s=2   │ │ runs s=3   │ │ runs s=4   │
-              │ (isolated  │ │ (isolated  │ │ (isolated  │ │ (isolated  │
-              │  tmp + IO) │ │  tmp + IO) │ │  tmp + IO) │ │  tmp + IO) │
-              └─────┬──────┘ └─────┬──────┘ └─────┬──────┘ └─────┬──────┘
-                    │               │               │               │
-                    └───────────────┴───────────────┴───────────────┴──────▶ cube_out/ (unique file per state)
-                                                           logs/ (per-state logs)
-
-
-Filename scheme
-===============
-
-  ORBITAL_RANGE → parse min/max integers → start6, end3
-  e.g., "584-589" → start=584, end=589 → start6="000584", end3="589"
-
-  Final name:  S<state>_orbs<start6>_<end3>.cub
-               S3_orbs000584_589.cub
-```
-
----
-
-💡 **Tip:** If your Markdown viewer supports Mermaid, you’ll see a colorful flowchart.
-If not, the ASCII diagram ensures everyone can still follow the process.
-
-```
-
----
-
-Do you want me to now go through your **whole README** and weave these diagrams directly into the right section so that it’s a fully polished, ready-to-publish GitHub doc? That way the diagrams fit naturally with the "How it works" section rather than being standalone at the bottom.
-```
+Happy computing! 🧫⚡️
