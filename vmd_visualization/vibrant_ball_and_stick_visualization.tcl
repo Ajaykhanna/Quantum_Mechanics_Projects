@@ -33,6 +33,7 @@ display depthcue off
 display rendermode GLSL
 display shadows on
 display ambientocclusion on
+display backgroundgradient on
 
 # Lighting setup for clean appearance
 light 0 on
