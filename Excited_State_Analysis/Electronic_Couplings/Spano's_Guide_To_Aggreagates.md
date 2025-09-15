@@ -75,24 +75,36 @@ A clear, practical digest of Frank C. Spano’s expanded theory of molecular agg
 
 ```mermaid
 flowchart TD
-A[Aggregate spectra collected] --> B{Absorption shift vs monomer?}
-B -->|Red| J1[J-candidate]
-B -->|Blue| H1[H-candidate]
-J1 --> C{PL 0–0 strong? Stokes ~0?}
-C -->|Yes| J2[Confirm J]
-C -->|No| J3[Check disorder/CT; temperature]
-H1 --> D{0–0 emission suppressed? False origin?}
-D -->|Yes| H2[Confirm H (+HT)]
-D -->|No| H3[Check solvation shift D-D'; disorder]
-J2 --> E{Compute R_PL = I00/I01}
-E --> F[N_coh ≈ λ²·R_PL]
-H2 --> G{Compute R_abs = IA1/IA2}
-J2 --> H{Compute R_abs}
-G --> I[H: R_abs ↓ with W]
-H --> J[J: R_abs ↑ with W]
-J3 & H3 --> K{Suspect CT?}
-K -->|Yes| L[Use 2nd spectral moment → |t_e + t_h|]
-K -->|No| M[Refine disorder model, fit widths]
+  A[Aggregate spectra collected];
+  B{Absorption shift vs monomer?};
+  A --> B;
+
+  B -->|Red| J1[J-candidate];
+  B -->|Blue| H1[H-candidate];
+
+  J1 --> C{PL 0-0 strong and Stokes ~ 0?};
+  C -->|Yes| J2[Confirm J];
+  C -->|No| J3[Check disorder or CT; also check temperature];
+
+  H1 --> D{0-0 emission suppressed and false origin present?};
+  D -->|Yes| H2[Confirm H (with HT)];
+  D -->|No| H3[Check solvation shift (D - D') and disorder];
+
+  J2 --> E{Compute R_PL = I00 / I01};
+  E --> F[N_coh ≈ lambda^2 * R_PL];
+
+  H2 --> G{Compute R_abs = I_A1 / I_A2};
+  J2 --> H{Compute R_abs};
+
+  G --> I[H: R_abs decreases as bandwidth W increases];
+  H --> J[J: R_abs increases as bandwidth W increases];
+
+  J3 --> K{Suspect CT?};
+  H3 --> K;
+
+  K -->|Yes| L[Use second spectral moment to estimate abs(t_e + t_h)];
+  K -->|No| M[Refine disorder model and fit widths];
+
 ```
 
 ---
