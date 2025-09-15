@@ -75,34 +75,33 @@ A clear, practical digest of Frank C. Spano’s expanded theory of molecular agg
 
 ```mermaid
 flowchart TD
-  A[Aggregate spectra collected]
-  A --> B{Absorption shift vs monomer}
-  B --> J1[Red: J candidate]
-  B --> H1[Blue: H candidate]
+  A[Aggregate spectra collected];
+  B{Absorption shift vs monomer};
+  A --> B;
 
-  J1 --> C{PL 0-0 strong and Stokes ~ 0}
-  C --> J2[Confirm J]
-  C --> J3[Check disorder or CT; check temperature]
+  B --> J1[J candidate red shift];
+  B --> H1[H candidate blue shift];
 
-  H1 --> D{0-0 emission suppressed and false origin present}
-  D --> YH[Yes]
-  D --> NH[No]
-  YH --> H2[Confirm H with HT]
-  NH --> H3[Check solvation shift D - D' and disorder]
+  J1 --> C{Is PL 0-0 strong and Stokes shift approx 0};
+  C --> J2[Confirm J];
+  C --> J3[Check disorder or CT and check temperature];
 
-  J2 --> E{Compute R_PL = I00 / I01}
-  E --> F[N_coh ~ lambda^2 * R_PL]
+  H1 --> D{Is 0-0 emission suppressed and false origin present};
+  D --> H2[Confirm H with HT];
+  D --> H3[Check solvation shift D minus D prime and disorder];
 
-  H2 --> G{Compute R_abs = I_A1 / I_A2}
-  J2 --> H{Compute R_abs}
+  J2 --> E{Compute RPL = I00 slash I01};
+  E --> F[Estimate Ncoh approx lambda squared times RPL];
 
-  G --> I[H: R_abs decreases as bandwidth W increases]
-  H --> J[J: R_abs increases as bandwidth W increases]
+  H2 --> G{Compute Rabs = IA1 slash IA2};
+  J2 --> H{Compute Rabs};
+  G --> I[H case Rabs decreases as bandwidth W increases];
+  H --> J[J case Rabs increases as bandwidth W increases];
 
-  J3 --> K{Suspect CT}
-  H3 --> K
-  K --> L[Use second spectral moment to estimate abs(t_e + t_h)]
-  K --> M[Refine disorder model and fit widths]
+  J3 --> K{Suspect CT};
+  H3 --> K;
+  K --> L[Use second spectral moment to estimate absolute value of te plus th];
+  K --> M[If not CT refine disorder model and fit widths];
 ```
 
 ---
