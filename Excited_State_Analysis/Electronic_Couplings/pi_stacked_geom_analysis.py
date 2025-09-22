@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist
-import MDAnalysis as mda
+import MDAnalysis as mda  # type: ignore
 import pandas as pd
 from collections import OrderedDict
 
@@ -532,7 +532,7 @@ class PiStackAnalyzer:
             colLabels=["Parameter"] + self.labels,
             cellLoc="center",
             loc="center",
-            bbox=[0, 0, 1, 1],
+            bbox=[0, 0, 1, 1],  # type: ignore
         )
         table.auto_set_font_size(False)
         table.set_fontsize(8)
