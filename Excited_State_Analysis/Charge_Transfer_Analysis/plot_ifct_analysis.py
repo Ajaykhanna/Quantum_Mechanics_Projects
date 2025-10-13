@@ -172,32 +172,32 @@ def create_ifct_plot(df, num_states=3, output_path=None, figsize=(10, 6), dpi=30
         if ct_val < 15:  # Small CT bar - place text outside or adjust
             if ct_val < 8:  # Very small - place above the bar
                 ax.annotate(
-                    f"{ct_val:.1f}%",
+                    f"{ct_val:.0f}%",
                     xy=(i, ct_val + 2),
                     ha="center",
                     va="bottom",
-                    fontsize=10,
+                    fontsize=14,
                     fontweight="bold",
                     color="black",
                     # bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
                 )
             else:  # Small but visible - use smaller font inside
                 ax.annotate(
-                    f"{ct_val:.1f}%",
+                    f"{ct_val:.0f}%",
                     xy=(i, ct_center),
                     ha="center",
                     va="center",
-                    fontsize=9,
+                    fontsize=14,
                     fontweight="bold",
                     color="white",
                 )
         else:  # Normal size - center placement
             ax.annotate(
-                f"{ct_val:.1f}%",
+                f"{ct_val:.0f}%",
                 xy=(i, ct_center),
                 ha="center",
                 va="center",
-                fontsize=11,
+                fontsize=14,
                 fontweight="bold",
                 color="white",
             )
@@ -207,44 +207,44 @@ def create_ifct_plot(df, num_states=3, output_path=None, figsize=(10, 6), dpi=30
         if le_val < 15:  # Small LE bar - place text outside or adjust
             if le_val < 8:  # Very small - place above the bar
                 ax.annotate(
-                    f"{le_val:.1f}%",
+                    f"{le_val:.0f}%",
                     xy=(i, ct_val + le_val + 2),
                     ha="center",
                     va="bottom",
-                    fontsize=10,
+                    fontsize=14,
                     fontweight="bold",
                     color="black",
                     # bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8),
                 )
             else:  # Small but visible - use smaller font inside
                 ax.annotate(
-                    f"{le_val:.1f}%",
+                    f"{le_val:.0f}%",
                     xy=(i, le_center),
                     ha="center",
                     va="center",
-                    fontsize=9,
+                    fontsize=14,
                     fontweight="bold",
                     color="white",
                 )
         else:  # Normal size - center placement
             ax.annotate(
-                f"{le_val:.1f}%",
+                f"{le_val:.0f}%",
                 xy=(i, le_center),
                 ha="center",
                 va="center",
-                fontsize=11,
+                fontsize=14,
                 fontweight="bold",
                 color="white",
             )
 
     # Add 50% reference line for easy comparison
-    ax.axhline(
-        y=50,
-        color="grey",
-        linestyle="--",
-        linewidth=1,
-        alpha=0.5,
-    )
+    # ax.axhline(
+    #    y=50,
+    #    color="grey",
+    #    linestyle="--",
+    #    linewidth=1,
+    #    alpha=0.5,
+    # )
 
     # Add legend
     ax.legend(loc="upper right", fontsize=12, framealpha=0.9)
