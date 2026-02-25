@@ -1,636 +1,388 @@
+#!/usr/bin/env python3
 """
-Extract NACT, Energy, and Geometry Data from NEXMD Frame Directories
-
-Reads frame directories containing:
-  - nact.out:  time + flattened N×N NACT matrix (antisymmetric)
-  - pes.out:   time + S0 + S1-S20 energies (eV)
-  - *.xyz:     atomic coordinates
-
-Features:
-  - Multiprocessing with configurable chunk sizes
-  - TQDM progress bars
-  - Configurable number of excited states and pair selection
-  - Robust leftover handling — no data lost
+Parse frozen-geometry NEXMD outputs into NumPy arrays.
 
 Outputs:
-  - acn_Z.npy, acn_R.npy, acn_E.npy
-  - acn_NACT{i}{j}.npy, acn_dENACT{i}{j}.npy per pair
-  - extraction_report.json
+  - acn_R.npy                       shape: (N, natoms, 3)
+  - acn_Z.npy                       shape: (N, natoms)
+  - acn_frzNACT{ij}.npy             shape: (N,) for requested state pairs
 
-Developer:
-__author__ = "Ajay Khanna"
-__place__ = "LANL"
-__date__ = "2026-24-02"
+Behavior:
+  - Frame order follows foldernames.txt exactly.
+  - Missing fock_rho_trace_frzn_matrix_eV.out is logged as a warning.
+  - Missing pair values are kept as NaN to preserve frame indexing.
+  - A text log is written to output_dir/parse_frozen_outputs.log
 """
 
+import argparse
+import logging
 import os
-import sys
-import json
-import glob
-import time
-import numpy as np
+import re
 from pathlib import Path
-from itertools import combinations
-from multiprocessing import Pool, cpu_count
-from functools import partial
+from multiprocessing import Pool, set_start_method
+
+# ALWAYS import numpy, as workers rely on it to avoid GPU context locks
+import numpy as np
+
+try:
+    import cupy as cp
+    GPU_AVAILABLE = True
+except ImportError:
+    GPU_AVAILABLE = False
 
 try:
     from tqdm import tqdm
-
     HAS_TQDM = True
 except ImportError:
     HAS_TQDM = False
-    print("WARNING: tqdm not installed. Install with: pip install tqdm")
-    print("         Falling back to basic progress reporting.\n")
 
-# ============================================================================
-# Configuration
-# ============================================================================
-BASE_DIR = "./extracted_frames_gsoptd_md"
-OUTPUT_DIR = "./50K_nact_data"
-OUTPUT_PREFIX = "acn_"
-
-N_FRAMES = 50000  # Total frames to extract (frame_1 to frame_N)
-N_ATOMS = 15  # Acetylacetone
-FRAME_PREFIX = "frame_"  # Subdirectory naming
-
-# --- Configurable excited states ---
-# The nact.out contains a 20×20 matrix, but you can choose to use fewer states.
-# N_STATES_IN_FILE: actual matrix size in nact.out (must match file)
-# N_STATES_TO_USE:  how many states to extract (1..N_STATES_TO_USE)
-N_STATES_IN_FILE = 20  # NACT matrix is always 20×20 in the file
-N_STATES_TO_USE = 3  # Extract pairs for states S1, S2, S3
-
-# Pair selection: automatically computed from N_STATES_TO_USE
-# States are 1-indexed: S1, S2, ..., S_{N_STATES_TO_USE}
-# Pairs: (1,2), (1,3), ..., up to all upper-triangle combinations
-
-# --- Multiprocessing ---
-N_WORKERS = min(16, cpu_count())  # Number of parallel workers
-CHUNK_SIZE = 500  # Frames per chunk (tune for your I/O)
-
-# ============================================================================
-# Element symbol → atomic number mapping
-# ============================================================================
-ELEMENT_TO_Z = {
-    "H": 1,
-    "He": 2,
-    "Li": 3,
-    "Be": 4,
-    "B": 5,
-    "C": 6,
-    "N": 7,
-    "O": 8,
-    "F": 9,
-    "Ne": 10,
-    "Na": 11,
-    "Mg": 12,
-    "Al": 13,
-    "Si": 14,
-    "P": 15,
-    "S": 16,
-    "Cl": 17,
-    "Ar": 18,
-    "K": 19,
-    "Ca": 20,
+ATOMIC_NUMBERS = {
+    "H": 1, "HE": 2, "LI": 3, "BE": 4, "B": 5, "C": 6, "N": 7, "O": 8, "F": 9,
+    "NE": 10, "NA": 11, "MG": 12, "AL": 13, "SI": 14, "P": 15, "S": 16, "CL": 17,
+    "AR": 18, "K": 19, "CA": 20,
 }
 
 
-# ============================================================================
-# Single-frame parsing functions
-# ============================================================================
-def parse_xyz_file(filepath, n_atoms):
-    """Parse XYZ file → (symbols, coords[n_atoms, 3])."""
-    with open(filepath, "r") as f:
-        lines = f.readlines()
+def setup_logger(output_dir):
+    output_dir.mkdir(parents=True, exist_ok=True)
+    log_path = output_dir / "parse_frozen_outputs.log"
 
-    n = int(lines[0].strip())
-    if n != n_atoms:
-        raise ValueError(f"Expected {n_atoms} atoms, got {n} in {filepath}")
+    logger = logging.getLogger("parse_frozen_outputs")
+    logger.setLevel(logging.INFO)
+    logger.handlers = []
 
-    symbols = []
-    coords = []
-    for line in lines[2 : 2 + n_atoms]:
+    fmt = logging.Formatter(
+        "%(asctime)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+    fh = logging.FileHandler(log_path, mode="w")
+    fh.setLevel(logging.INFO)
+    fh.setFormatter(fmt)
+
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.INFO)
+    ch.setFormatter(fmt)
+
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+    return logger, log_path
+
+
+def read_foldernames(path):
+    names = []
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            token = line.strip()
+            if not token or token.startswith("#"):
+                continue
+            names.append(token)
+    return names
+
+
+def parse_pair_token(token):
+    token = token.strip()
+    if not token:
+        raise ValueError("empty pair token")
+
+    if "-" in token:
+        parts = token.split("-")
+        if len(parts) != 2:
+            raise ValueError(f"invalid pair token: {token}")
+        i = int(parts[0])
+        j = int(parts[1])
+    else:
+        if not token.isdigit():
+            raise ValueError(f"invalid pair token: {token}")
+        if len(token) != 2:
+            raise ValueError(f"pair token '{token}' is ambiguous; use i-j format for multi-digit states")
+        i = int(token[0])
+        j = int(token[1])
+
+    if i == j:
+        raise ValueError(f"pair token has equal states: {token}")
+        
+    # FIX: Array Bounds Check. Prevent Python negative indexing wrap-around.
+    if i <= 0 or j <= 0:
+        raise ValueError(f"pair tokens must be 1-indexed (e.g., state > 0). Got: {token}")
+
+    i, j = sorted((i, j))
+    code = f"{i}{j}"
+    return i, j, code
+
+
+def parse_pairs(pair_string):
+    seen = set()
+    parsed = []
+    for tok in pair_string.split(","):
+        i, j, code = parse_pair_token(tok)
+        if code in seen:
+            continue
+        seen.add(code)
+        parsed.append((i, j, code))
+    return parsed
+
+
+def resolve_frame_paths(frame_token, trace_filename):
+    frame_path = Path(frame_token)
+    frame_dir = frame_path.with_suffix("") if frame_path.suffix else frame_path
+    stem = frame_path.stem if frame_path.suffix else frame_path.name
+
+    xyz_candidates = [
+        frame_dir / (stem + ".xyz"),
+        frame_dir / (frame_path.name + ".xyz"),
+    ]
+    xyz_path = xyz_candidates[0]
+    for cand in xyz_candidates:
+        if cand.exists():
+            xyz_path = cand
+            break
+
+    trace_path = frame_dir / trace_filename
+    return frame_dir, xyz_path, trace_path
+
+
+def atomic_number_from_token(tok):
+    try:
+        return int(tok)
+    except ValueError:
+        key = tok.strip().upper()
+        if key not in ATOMIC_NUMBERS:
+            raise ValueError(f"unknown element token '{tok}'")
+        return ATOMIC_NUMBERS[key]
+
+
+def read_xyz(path, natoms):
+    with open(path, "r", encoding="utf-8") as f:
+        lines = [ln.strip() for ln in f if ln.strip()]
+
+    if len(lines) < natoms:
+        raise ValueError("too few lines in xyz file")
+
+    atom_lines = None
+    first_parts = lines[0].split()
+    if len(first_parts) > 0 and first_parts[0].isdigit():
+        nfile = int(first_parts[0])
+        if len(lines) >= nfile + 2:
+            atom_lines = lines[2 : 2 + nfile]
+
+    if atom_lines is None:
+        atom_lines = lines
+
+    if len(atom_lines) < natoms:
+        raise ValueError(f"xyz has fewer than requested natoms={natoms}")
+
+    atom_lines = atom_lines[:natoms]
+
+    z = np.full((natoms,), -1, dtype=np.int32)
+    r = np.full((natoms, 3), np.nan, dtype=np.float32)
+
+    for i, line in enumerate(atom_lines):
         parts = line.split()
-        symbols.append(parts[0])
-        coords.append([float(parts[1]), float(parts[2]), float(parts[3])])
+        if len(parts) < 4:
+            raise ValueError(f"bad xyz atom line: '{line}'")
+        z[i] = atomic_number_from_token(parts[0])
+        r[i, 0] = float(parts[1])
+        r[i, 1] = float(parts[2])
+        r[i, 2] = float(parts[3])
 
-    return symbols, np.array(coords, dtype=np.float64)
-
-
-def parse_nact_file(filepath, n_states_in_file):
-    """Parse nact.out → (time, nact_matrix[n_states, n_states])."""
-    data = np.loadtxt(filepath)
-    if data.ndim == 1:
-        data = data.reshape(1, -1)
-
-    time_val = data[0, 0]
-    nact_flat = data[0, 1:]
-
-    expected = n_states_in_file * n_states_in_file
-    if len(nact_flat) != expected:
-        raise ValueError(
-            f"Expected {expected} values for {n_states_in_file}×{n_states_in_file} "
-            f"matrix, got {len(nact_flat)} in {filepath}"
-        )
-
-    return time_val, nact_flat.reshape(n_states_in_file, n_states_in_file)
+    return z, r
 
 
-def parse_pes_file(filepath):
-    """Parse pes.out → (time, energies[n_states+1])."""
-    data = np.loadtxt(filepath)
-    if data.ndim == 1:
-        data = data.reshape(1, -1)
+def read_trace_matrix(path):
+    nstates_header = None
+    rows = []
+    pat = re.compile(r"Nstates\s*=\s*(\d+)")
 
-    return data[0, 0], data[0, 1:]
+    with open(path, "r", encoding="utf-8") as f:
+        for raw in f:
+            line = raw.strip()
+            if not line:
+                continue
+            if line.startswith("#"):
+                m = pat.search(line)
+                if m:
+                    nstates_header = int(m.group(1))
+                continue
+
+            vals = [float(x.replace("D", "E").replace("d", "e")) for x in line.split()]
+            rows.append(vals)
+
+    if not rows:
+        raise ValueError("trace matrix file contains no numeric rows")
+
+    ncol = len(rows[0])
+    for row in rows:
+        if len(row) != ncol:
+            raise ValueError("inconsistent row length in matrix")
+
+    mat = np.array(rows, dtype=np.float64)
+    if mat.shape[0] != mat.shape[1]:
+        raise ValueError(f"matrix is not square: {mat.shape}")
+
+    if nstates_header is not None and mat.shape[0] != nstates_header:
+        raise ValueError(f"matrix size mismatch with header: {mat.shape[0]} vs {nstates_header}")
+
+    return mat
 
 
-def process_single_frame(
-    frame_num, base_dir, frame_prefix, n_atoms, n_states_in_file, n_states_to_use, pairs
-):
-    """Process one frame directory. Returns a result dict or error info.
+def process_frame(task_args):
+    """Worker function to process a single frame."""
+    idx, frame, args, pairs = task_args
 
-    This function is called by each worker process.
-    """
-    frame_dir = os.path.join(base_dir, f"{frame_prefix}{frame_num}")
+    # Force standard numpy in workers to prevent multiprocessing GPU context conflicts
+    np_or_cp = np 
 
-    result = {
-        "frame_num": frame_num,
-        "status": "ok",
-        "error": None,
-        "coords": None,
-        "symbols": None,
-        "energies": None,
-        "nact_raw": None,
-        "denact": None,
-        "antisym_error": 0.0,
+    frame_dir, xyz_path, trace_path = resolve_frame_paths(frame, args.trace_filename)
+
+    R_frame = np_or_cp.full((args.natoms, 3), np.nan, dtype=np.float32)
+    Z_frame = np_or_cp.full((args.natoms,), -1, dtype=np.int32)
+    pair_vals_frame = {code: np.nan for _, _, code in pairs}
+    
+    # Track individual frame stats to send back to main process
+    f_stats = {
+        "xyz_ok": 0, "missing_xyz": 0, "bad_xyz": 0,
+        "trace_ok": 0, "missing_trace": 0, "bad_trace": 0
     }
 
-    # Check directory exists
-    if not os.path.isdir(frame_dir):
-        result["status"] = "missing_dir"
-        return result
+    # Process XYZ file
+    if xyz_path.exists():
+        try:
+            z, r = read_xyz(xyz_path, args.natoms)
+            Z_frame = z
+            R_frame = r
+            f_stats["xyz_ok"] = 1
+        except Exception as exc:
+            logging.warning(f"Frame {frame}: failed to parse xyz ({xyz_path}): {exc}")
+            f_stats["bad_xyz"] = 1
+    else:
+        f_stats["missing_xyz"] = 1
 
-    # --- XYZ ---
-    xyz_files = glob.glob(os.path.join(frame_dir, "*.xyz"))
-    if not xyz_files:
-        result["status"] = "missing_xyz"
-        return result
+    # Process trace matrix
+    if trace_path.exists():
+        try:
+            mat = read_trace_matrix(trace_path)
+            nstates = mat.shape[0]
+            for i, j, code in pairs:
+                # Array bounds check: j must be within state dimensions
+                if j <= nstates:
+                    pair_vals_frame[code] = mat[i - 1, j - 1]
+            f_stats["trace_ok"] = 1
+        except Exception as exc:
+            logging.warning(f"Frame {frame}: failed to parse trace matrix ({trace_path}): {exc}")
+            f_stats["bad_trace"] = 1
+    else:
+        f_stats["missing_trace"] = 1
 
-    try:
-        symbols, coords = parse_xyz_file(xyz_files[0], n_atoms)
-        result["coords"] = coords
-        result["symbols"] = symbols
-    except Exception as e:
-        result["status"] = "bad_xyz"
-        result["error"] = str(e)
-        return result
-
-    # --- PES ---
-    pes_file = os.path.join(frame_dir, "pes.out")
-    if not os.path.isfile(pes_file):
-        result["status"] = "missing_pes"
-        return result
-
-    try:
-        _, energies = parse_pes_file(pes_file)
-        result["energies"] = energies
-    except Exception as e:
-        result["status"] = "bad_pes"
-        result["error"] = str(e)
-        return result
-
-    # --- NACT ---
-    nact_file = os.path.join(frame_dir, "nact.out")
-    if not os.path.isfile(nact_file):
-        result["status"] = "missing_nact"
-        return result
-
-    try:
-        _, nact_matrix = parse_nact_file(nact_file, n_states_in_file)
-
-        # Check antisymmetry
-        result["antisym_error"] = float(np.max(np.abs(nact_matrix + nact_matrix.T)))
-
-        # Extract upper triangle for requested pairs and compute scaled NACTs
-        nact_vals = {}
-        denact_vals = {}
-
-        for i, j in pairs:
-            raw_val = nact_matrix[i - 1, j - 1]  # 0-indexed in matrix
-            nact_vals[f"{i}_{j}"] = raw_val
-
-            # dENACT = NACT × (E_j - E_i)
-            # energies[0] = S0, energies[i] = Si
-            delta_E = energies[j] - energies[i]
-            denact_vals[f"{i}_{j}"] = raw_val * delta_E
-
-        result["nact_raw"] = nact_vals
-        result["denact"] = denact_vals
-
-    except Exception as e:
-        result["status"] = "bad_nact"
-        result["error"] = str(e)
-        return result
-
-    return result
+    return idx, R_frame, Z_frame, pair_vals_frame, f_stats
 
 
-def process_chunk(
-    frame_numbers,
-    base_dir,
-    frame_prefix,
-    n_atoms,
-    n_states_in_file,
-    n_states_to_use,
-    pairs,
-):
-    """Process a chunk of frames sequentially (called within a worker)."""
-    results = []
-    for fn in frame_numbers:
-        r = process_single_frame(
-            fn,
-            base_dir,
-            frame_prefix,
-            n_atoms,
-            n_states_in_file,
-            n_states_to_use,
-            pairs,
-        )
-        results.append(r)
-    return results
-
-
-# ============================================================================
-# Main
-# ============================================================================
 def main():
-    start_time = time.time()
-
-    # Compute pairs from N_STATES_TO_USE
-    state_indices = list(range(1, N_STATES_TO_USE + 1))
-    all_pairs = list(combinations(state_indices, 2))
-    n_pairs = len(all_pairs)
-
-    print("=" * 80)
-    print("NEXMD NACT/Energy/Geometry Extraction")
-    print("=" * 80)
-    print(f"Base directory:      {BASE_DIR}")
-    print(f"Output directory:    {OUTPUT_DIR}")
-    print(f"Frames to extract:   {N_FRAMES} (frame_1 to frame_{N_FRAMES})")
-    print(
-        f"States in file:      {N_STATES_IN_FILE} ({N_STATES_IN_FILE}×{N_STATES_IN_FILE} matrix)"
+    parser = argparse.ArgumentParser(
+        description="Parse frozen trace outputs into acn_* numpy files."
     )
-    print(
-        f"States to use:       {N_STATES_TO_USE} → S{state_indices[0]}..S{state_indices[-1]}"
+    parser.add_argument("--foldernames", default="foldernames.txt")
+    parser.add_argument("--output_dir", default="parsed_npys")
+    parser.add_argument("--pairs", default="12,13,23")
+    parser.add_argument("--natoms", type=int, default=15)
+    parser.add_argument("--trace_filename", default="fock_rho_trace_frzn_matrix_eV.out")
+    parser.add_argument(
+        "--use_gpus", action="store_true",
+        help="Enable GPU usage if CuPy is available. Defaults to CPU only.",
     )
-    print(f"Pairs to extract:    {n_pairs}")
-    if n_pairs <= 20:
-        print(f"  Pairs: {all_pairs}")
-    else:
-        print(f"  First 5: {all_pairs[:5]}")
-        print(f"  Last 5:  {all_pairs[-5:]}")
-    print(f"Atoms:               {N_ATOMS}")
-    print(f"Workers:             {N_WORKERS}")
-    print(f"Chunk size:          {CHUNK_SIZE}")
-    print()
+    args = parser.parse_args()
 
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    # Determine whether to use GPUs based on argparse and CuPy availability
+    global GPU_AVAILABLE 
+    GPU_AVAILABLE = GPU_AVAILABLE and args.use_gpus
 
-    # ========================================================================
-    # Build chunks — sequential frame numbers, robust leftover handling
-    # ========================================================================
-    all_frame_numbers = list(range(1, N_FRAMES + 1))  # frame_1 to frame_N
+    output_dir = Path(args.output_dir)
+    logger, log_path = setup_logger(output_dir)
 
-    chunks = []
-    for start in range(0, N_FRAMES, CHUNK_SIZE):
-        end = min(start + CHUNK_SIZE, N_FRAMES)
-        chunks.append(all_frame_numbers[start:end])
+    frames = read_foldernames(args.foldernames)
+    nframes = len(frames)
+    if nframes == 0:
+        logger.error(f"No frames found in {args.foldernames}")
+        return
 
-    n_chunks = len(chunks)
-    total_in_chunks = sum(len(c) for c in chunks)
+    pairs = parse_pairs(args.pairs)
+    logger.info(f"Total frames listed: {nframes}")
+    logger.info(f"Requested state pairs: {', '.join([p[2] for p in pairs])}")
 
-    print(f"Chunking: {n_chunks} chunks, {total_in_chunks} frames total")
-    assert total_in_chunks == N_FRAMES, (
-        f"FATAL: Chunk accounting error! "
-        f"Chunks contain {total_in_chunks} frames but expected {N_FRAMES}. "
-        f"Last chunk has {len(chunks[-1])} frames."
-    )
+    # Use CuPy in the main process if available and enabled
+    np_or_cp = cp if GPU_AVAILABLE else np
 
-    # Report chunk breakdown including leftover
-    if N_FRAMES % CHUNK_SIZE == 0:
-        print(f"  All chunks: {CHUNK_SIZE} frames × {n_chunks} chunks (no leftover)")
-    else:
-        n_full = n_chunks - 1
-        leftover = len(chunks[-1])
-        print(f"  Full chunks:    {CHUNK_SIZE} frames × {n_full} chunks")
-        print(f"  Leftover chunk: {leftover} frames × 1 chunk")
+    # Ensure bounds and types are mapped safely whether using CuPy or NumPy
+    R = np_or_cp.full((nframes, args.natoms, 3), np_or_cp.nan, dtype=np_or_cp.float32)
+    Z = np_or_cp.full((nframes, args.natoms), -1, dtype=np_or_cp.int32)
+    pair_vals = {
+        code: np_or_cp.full((nframes,), np_or_cp.nan, dtype=np_or_cp.float64)
+        for _, _, code in pairs
+    }
 
-    print(f"  Verified: {total_in_chunks} == {N_FRAMES} ✓")
-    print()
+    stats = {
+        "xyz_ok": 0, "missing_xyz": 0, "bad_xyz": 0,
+        "trace_ok": 0, "missing_trace": 0, "bad_trace": 0
+    }
 
-    # ========================================================================
-    # Parallel extraction
-    # ========================================================================
-    print(f"Extracting with {N_WORKERS} workers...")
-
-    worker_fn = partial(
-        process_chunk,
-        base_dir=BASE_DIR,
-        frame_prefix=FRAME_PREFIX,
-        n_atoms=N_ATOMS,
-        n_states_in_file=N_STATES_IN_FILE,
-        n_states_to_use=N_STATES_TO_USE,
-        pairs=all_pairs,
-    )
-
-    all_results = []
-
-    with Pool(processes=N_WORKERS) as pool:
+    with Pool(processes=16) as pool:
+        tasks = [(idx, frame, args, pairs) for idx, frame in enumerate(frames)]
+        
+        # Use imap_unordered for dynamic streaming of results as they finish
+        result_iterator = pool.imap_unordered(process_frame, tasks)
+        
         if HAS_TQDM:
-            iterator = pool.imap(worker_fn, chunks)
-            pbar = tqdm(iterator, total=n_chunks, desc="  Chunks", unit="chunk")
-            for chunk_results in pbar:
-                all_results.extend(chunk_results)
-                n_ok = sum(1 for r in all_results if r["status"] == "ok")
-                pbar.set_postfix(ok=n_ok, total=len(all_results))
-            pbar.close()
-        else:
-            for idx, chunk_results in enumerate(pool.imap(worker_fn, chunks)):
-                all_results.extend(chunk_results)
-                if (idx + 1) % max(1, n_chunks // 20) == 0 or idx == n_chunks - 1:
-                    n_ok = sum(1 for r in all_results if r["status"] == "ok")
-                    elapsed = time.time() - start_time
-                    print(
-                        f"  Chunk {idx + 1}/{n_chunks}: "
-                        f"{n_ok}/{len(all_results)} ok  [{elapsed:.0f}s]"
-                    )
+            result_iterator = tqdm(result_iterator, total=len(tasks), desc="Parsing Frames", unit="frame")
 
-    extract_time = time.time() - start_time
+        # Aggregate results as they stream in (memory efficient)
+        for idx, R_frame, Z_frame, pair_vals_frame, f_stats in result_iterator:
+            if GPU_AVAILABLE:
+                R[idx, :, :] = cp.asarray(R_frame)
+                Z[idx, :] = cp.asarray(Z_frame)
+            else:
+                R[idx, :, :] = R_frame
+                Z[idx, :] = Z_frame
+                
+            for code in pair_vals_frame:
+                pair_vals[code][idx] = pair_vals_frame[code]
+                
+            # Accumulate run stats safely
+            for k in stats:
+                stats[k] += f_stats[k]
 
-    # ========================================================================
-    # Verify completeness — CRITICAL: no frames lost
-    # ========================================================================
-    print(f"\n  Extraction done in {extract_time:.1f}s")
-    print(f"  Results collected: {len(all_results)}")
+    # Safely retrieve array based on global definition, avoiding NameError
+    def get_final_array(arr):
+        return cp.asnumpy(arr) if GPU_AVAILABLE else arr
 
-    assert len(all_results) == N_FRAMES, (
-        f"FATAL: Lost frames during multiprocessing! "
-        f"Got {len(all_results)} results but expected {N_FRAMES}."
+    # Save results
+    np.save(output_dir / "acn_R.npy", get_final_array(R))
+    np.save(output_dir / "acn_Z.npy", get_final_array(Z))
+    for _, _, code in pairs:
+        np.save(output_dir / f"acn_frzNACT{code}.npy", get_final_array(pair_vals[code]))
+
+    logger.info(f"Saved: {output_dir / 'acn_R.npy'}")
+    logger.info(f"Saved: {output_dir / 'acn_Z.npy'}")
+    for _, _, code in pairs:
+        logger.info(f"Saved: {output_dir / f'acn_frzNACT{code}.npy'}")
+
+    logger.info(
+        "XYZ summary: ok=%d missing=%d bad=%d",
+        stats["xyz_ok"], stats["missing_xyz"], stats["bad_xyz"]
     )
-
-    # Sort by frame number to restore sequential order
-    all_results.sort(key=lambda r: r["frame_num"])
-
-    # Verify every frame_num from 1..N_FRAMES is present exactly once
-    result_frame_nums = [r["frame_num"] for r in all_results]
-    expected_frame_nums = list(range(1, N_FRAMES + 1))
-    if result_frame_nums != expected_frame_nums:
-        missing = set(expected_frame_nums) - set(result_frame_nums)
-        duplicate = [fn for fn in result_frame_nums if result_frame_nums.count(fn) > 1]
-        print(f"  FATAL: Frame number mismatch!")
-        if missing:
-            print(f"    Missing: {sorted(missing)[:20]}...")
-        if duplicate:
-            print(f"    Duplicate: {sorted(set(duplicate))[:20]}...")
-        sys.exit(1)
-
-    print(f"  Frame integrity check: all {N_FRAMES} frames accounted for ✓")
-
-    # ========================================================================
-    # Categorize results
-    # ========================================================================
-    status_counts = {}
-    for r in all_results:
-        s = r["status"]
-        status_counts[s] = status_counts.get(s, 0) + 1
-
-    print(f"\n  Status breakdown:")
-    for status, count in sorted(status_counts.items()):
-        pct = 100.0 * count / N_FRAMES
-        marker = "✓" if status == "ok" else "✗"
-        print(f"    {marker} {status:20s}: {count:6d} ({pct:.1f}%)")
-
-    # Collect valid results
-    ok_results = [r for r in all_results if r["status"] == "ok"]
-    n_valid = len(ok_results)
-
-    if n_valid == 0:
-        print("\nFATAL: No valid frames extracted!")
-        sys.exit(1)
-
-    # Get Z from first valid frame
-    Z_all = np.array(
-        [ELEMENT_TO_Z.get(s, 0) for s in ok_results[0]["symbols"]],
-        dtype=np.int32,
+    logger.info(
+        "Trace summary: ok=%d missing=%d bad=%d",
+        stats["trace_ok"], stats["missing_trace"], stats["bad_trace"]
     )
-    print(f"\n  Atomic numbers: {Z_all}")
-    print(f"  Elements: {ok_results[0]['symbols']}")
-
-    # ========================================================================
-    # Assemble arrays
-    # ========================================================================
-    print(f"\n  Assembling arrays for {n_valid} valid configurations...")
-
-    R_all = np.zeros((n_valid, N_ATOMS, 3), dtype=np.float64)
-    E_all = np.zeros((n_valid, len(ok_results[0]["energies"])), dtype=np.float64)
-
-    pair_keys = [f"{i}_{j}" for (i, j) in all_pairs]
-    nact_arrays = {k: np.zeros(n_valid, dtype=np.float64) for k in pair_keys}
-    denact_arrays = {k: np.zeros(n_valid, dtype=np.float64) for k in pair_keys}
-
-    antisym_errors = []
-
-    if HAS_TQDM:
-        iterator = tqdm(
-            enumerate(ok_results), total=n_valid, desc="  Assembling", unit="config"
-        )
-    else:
-        iterator = enumerate(ok_results)
-
-    for idx, r in iterator:
-        R_all[idx] = r["coords"]
-        E_all[idx] = r["energies"]
-
-        for k in pair_keys:
-            nact_arrays[k][idx] = r["nact_raw"][k]
-            denact_arrays[k][idx] = r["denact"][k]
-
-        if r["antisym_error"] > 1e-8:
-            antisym_errors.append((r["frame_num"], r["antisym_error"]))
-
-    # ========================================================================
-    # Statistics
-    # ========================================================================
-    print("\n" + "=" * 80)
-    print("DATA STATISTICS")
-    print("=" * 80)
-
-    print(f"\n  Valid configurations: {n_valid}")
-    print(f"  Coordinates R: shape {R_all.shape}")
-    print(f"    Range: [{R_all.min():.4f}, {R_all.max():.4f}] Å")
-
-    print(f"\n  Energies E: shape {E_all.shape}")
-    for s in range(min(N_STATES_TO_USE + 1, E_all.shape[1])):
-        label = "S0" if s == 0 else f"S{s}"
-        print(f"    {label}: [{E_all[:, s].min():.4f}, {E_all[:, s].max():.4f}] eV")
-
-    if antisym_errors:
-        max_err = max(e for _, e in antisym_errors)
-        print(
-            f"\n  Antisymmetry violations: {len(antisym_errors)} "
-            f"(max error: {max_err:.2e})"
-        )
-
-    print(f"\n  Raw NACT statistics:")
-    print(
-        f"    {'Pair':>10s} | {'min':>12s} | {'max':>12s} | "
-        f"{'mean':>12s} | {'std':>12s}"
-    )
-    print(f"    {'-'*10}-+-{'-'*12}-+-{'-'*12}-+-{'-'*12}-+-{'-'*12}")
-
-    for key in pair_keys:
-        i, j = key.split("_")
-        v = nact_arrays[key]
-        print(
-            f"    S{i}-S{j:>2s}    | {v.min():>12.6f} | {v.max():>12.6f} | "
-            f"{v.mean():>12.6f} | {v.std():>12.6f}"
-        )
-
-    print(f"\n  Scaled NACT (dENACT) statistics:")
-    print(
-        f"    {'Pair':>10s} | {'min':>12s} | {'max':>12s} | "
-        f"{'mean':>12s} | {'std':>12s}"
-    )
-    print(f"    {'-'*10}-+-{'-'*12}-+-{'-'*12}-+-{'-'*12}-+-{'-'*12}")
-
-    for key in pair_keys:
-        i, j = key.split("_")
-        v = denact_arrays[key]
-        print(
-            f"    S{i}-S{j:>2s}    | {v.min():>12.6f} | {v.max():>12.6f} | "
-            f"{v.mean():>12.6f} | {v.std():>12.6f}"
-        )
-
-    # ========================================================================
-    # Save data
-    # ========================================================================
-    print("\n" + "=" * 80)
-    print("SAVING DATA")
-    print("=" * 80)
-    print(f"  Output directory: {OUTPUT_DIR}")
-
-    # Z — tiled to (n_valid, n_atoms)
-    Z_tiled = np.tile(Z_all, (n_valid, 1))
-    z_path = os.path.join(OUTPUT_DIR, f"{OUTPUT_PREFIX}Z.npy")
-    np.save(z_path, Z_tiled)
-    print(f"  Z:  {z_path}  shape={Z_tiled.shape}")
-
-    # R
-    r_path = os.path.join(OUTPUT_DIR, f"{OUTPUT_PREFIX}R.npy")
-    np.save(r_path, R_all.astype(np.float32))
-    print(f"  R:  {r_path}  shape={R_all.shape}")
-
-    # E
-    e_path = os.path.join(OUTPUT_DIR, f"{OUTPUT_PREFIX}E.npy")
-    np.save(e_path, E_all.astype(np.float32))
-    print(f"  E:  {e_path}  shape={E_all.shape}")
-
-    # Raw NACTs
-    print(f"\n  Saving {n_pairs} raw NACT files...")
-    for key in pair_keys:
-        i, j = key.split("_")
-        fpath = os.path.join(OUTPUT_DIR, f"{OUTPUT_PREFIX}NACT{i}{j}.npy")
-        np.save(fpath, nact_arrays[key].astype(np.float32))
-
-    # Scaled NACTs
-    print(f"  Saving {n_pairs} scaled NACT (dENACT) files...")
-    for key in pair_keys:
-        i, j = key.split("_")
-        fpath = os.path.join(OUTPUT_DIR, f"{OUTPUT_PREFIX}dENACT{i}{j}.npy")
-        np.save(fpath, denact_arrays[key].astype(np.float32))
-
-    print(f"  Saved {2 * n_pairs} NACT/dENACT files total")
-
-    # ========================================================================
-    # Final verification — count output files
-    # ========================================================================
-    npy_files = [f for f in os.listdir(OUTPUT_DIR) if f.endswith(".npy")]
-    expected_npy = 3 + 2 * n_pairs  # Z + R + E + NACT + dENACT per pair
-    print(f"\n  Output .npy files: {len(npy_files)} (expected {expected_npy})")
-    if len(npy_files) != expected_npy:
-        print(f"  WARNING: File count mismatch!")
-
-    # ========================================================================
-    # Save report
-    # ========================================================================
-    bad_frames = {
-        status: [r["frame_num"] for r in all_results if r["status"] == status]
-        for status in status_counts
-        if status != "ok"
-    }
-
-    report = {
-        "base_dir": BASE_DIR,
-        "output_dir": OUTPUT_DIR,
-        "n_frames_requested": N_FRAMES,
-        "n_valid": n_valid,
-        "n_states_in_file": N_STATES_IN_FILE,
-        "n_states_to_use": N_STATES_TO_USE,
-        "n_atoms": N_ATOMS,
-        "n_pairs": n_pairs,
-        "pairs": [list(p) for p in all_pairs],
-        "atomic_numbers": Z_all.tolist(),
-        "energy_unit": "eV",
-        "coordinate_unit": "Angstrom",
-        "n_workers": N_WORKERS,
-        "chunk_size": CHUNK_SIZE,
-        "extraction_time_s": float(extract_time),
-        "status_counts": status_counts,
-        "bad_frames": {k: v[:50] for k, v in bad_frames.items()},
-        "n_antisym_violations": len(antisym_errors),
-        "nact_stats": {},
-        "denact_stats": {},
-    }
-
-    for key in pair_keys:
-        i, j = key.split("_")
-        report["nact_stats"][f"NACT{i}{j}"] = {
-            "min": float(nact_arrays[key].min()),
-            "max": float(nact_arrays[key].max()),
-            "mean": float(nact_arrays[key].mean()),
-            "std": float(nact_arrays[key].std()),
-        }
-        report["denact_stats"][f"dENACT{i}{j}"] = {
-            "min": float(denact_arrays[key].min()),
-            "max": float(denact_arrays[key].max()),
-            "mean": float(denact_arrays[key].mean()),
-            "std": float(denact_arrays[key].std()),
-        }
-
-    report_path = os.path.join(OUTPUT_DIR, "extraction_report.json")
-    with open(report_path, "w") as f:
-        json.dump(report, f, indent=2)
-    print(f"\n  Report: {report_path}")
-
-    # ========================================================================
-    # Summary
-    # ========================================================================
-    total_time = time.time() - start_time
-    print("\n" + "=" * 80)
-    print("EXTRACTION COMPLETE")
-    print("=" * 80)
-    print(f"  Frames processed:  {N_FRAMES}")
-    print(f"  Valid configs:     {n_valid}")
-    print(f"  States used:       S1..S{N_STATES_TO_USE} ({n_pairs} pairs)")
-    print(f"  Output files:      {len(npy_files)} .npy + report")
-    print(
-        f"  Total time:        {total_time:.1f}s "
-        f"({N_FRAMES / total_time:.0f} frames/s)"
-    )
-    print("=" * 80)
+    logger.info(f"Log saved to: {log_path}")
 
 
 if __name__ == "__main__":
+    # Protect set_start_method inside the main execution block
+    # This prevents the "RuntimeError: context has already been set" 
+    # when spawn method recursively re-imports the file
+    try:
+        set_start_method("spawn")
+    except RuntimeError:
+        pass
+        
     main()
