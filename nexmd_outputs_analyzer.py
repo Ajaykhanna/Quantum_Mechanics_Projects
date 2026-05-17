@@ -11,7 +11,7 @@ Usage:
     python nexmd_analyzer.py --dir /path/to/outputs --output analysis.txt
 
 Developer Information:
-    __author__ = "ajay khanna"
+    __author__ = "Ajay Khanna"
     __place__ = "LANL"
     __date__ = "May.17.2026"
 """
@@ -401,18 +401,22 @@ def perform_extraction(target_dir, args):
 
         # Handle Transition Density matrices pairwise separation if requested
         if filename == "transition-densities.out" and args.extract_pair_tdmats:
-            for i, block in enumerate(blocks):
-                out_name = f"TDMat_pair_{i+1:02d}.txt"
+            # Flatten blocks since single point outputs are continuous rows
+            all_rows = []
+            for b in blocks:
+                all_rows.extend(b)
+
+            # Each row represents a state transition from Ground (S0) to Excited State S(i+1)
+            for i, row in enumerate(all_rows):
+                out_name = f"TDMat_00_{i+1:02d}.txt"
                 out_path = os.path.join(args.extract_dir, out_name)
+                # save_block expects a 2D array, so we wrap the row in a list
                 save_block(
-                    out_path, block, f"Extracted from {filename}, Target State {i+1}"
+                    out_path,
+                    [row],
+                    f"Extracted from {filename}, Transition S0 -> S{i+1}",
                 )
-                extracted_files.append(
-                    (
-                        out_name,
-                        "TDM Matrix" if len(block) > 1 else "TDM Diagonals Vector",
-                    )
-                )
+                extracted_files.append((out_name, "TDM Vector/Flattened Matrix"))
         else:
             # Flatten/Stack blocks for unified 2D numpy format (Option B)
             stacked_data = []
@@ -479,7 +483,7 @@ def main():
     parser.add_argument(
         "--extract_pair_tdmats",
         action="store_true",
-        help="Extract each transition density matrix pair to a separate file (e.g. TDMat_pair_01.txt)",
+        help="Extract each transition density matrix pair to a separate file (e.g. TDMat_00_01.txt)",
     )
     args = parser.parse_args()
 
